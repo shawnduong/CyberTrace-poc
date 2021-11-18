@@ -9,6 +9,7 @@ import os
 
 from lib.Module import Module
 from lib.auxiliary import *
+from termcolor import colored
 from threading import Thread
 
 # Appending the path declares effective root for imports.
@@ -39,7 +40,7 @@ def main():
 	log(NORMAL, f"Loaded {len(modules)} module{'s' if len(modules) != 1 else ''}:")
 
 	for module in modules:
-		log(NORMAL, f"| {module.name} {module.version}")
+		log(NORMAL, f"| {colored(module.name, 'green')} {module.version}")
 		log(NORMAL, f"| -> {module.description}")
 
 	log(NORMAL, "Initialization complete.")
@@ -55,7 +56,7 @@ def main():
 
 	# Upon keyboard interrupt, send kill signals to all threads and join.
 	except KeyboardInterrupt:
-		log(WARNING, "Sending kill signals to all threads.")
+		log(WARNING, "Sending kill signals to all threads.", start="\r")
 		for module in modules: module.kill(module)
 		for thread in threads: thread.join()
 

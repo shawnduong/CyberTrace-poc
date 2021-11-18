@@ -15,13 +15,13 @@ VERBOSE    = 1
 WARNING    = 2
 EMERGENCY  = 3
 
-def log(msgType: int, msg: str) -> Union[None, tuple]:
+def log(msgType: int, msg: str, start: str="") -> Union[None, tuple]:
 	"""
 	Logging function that will automatically color and channelize log messages
 	given a msgType (NORMAL, VERBOSE, WARNING, EMERGENCY) and message.
 	"""
 
-	msg = f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] :: {msg}"
+	msg = f"{start}[{time.strftime('%Y-%m-%d %H:%M:%S')}] :: {msg}"
 
 	if msgType in (0, 1):
 		print(msg)

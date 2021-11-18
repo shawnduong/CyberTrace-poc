@@ -12,12 +12,76 @@ from lib.auxiliary import *
 from termcolor import colored
 from threading import Thread
 
-# Appending the path declares effective root for imports.
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+# Positional arguments.
+P_ARGUMENTS = {
+}
 
-def main():
+# Optional help arguments.
+H_ARGUMENTS = {
+	("-h", "--help"): "Display the help menu and exit.",
+}
+
+# Optional arguments.
+O_ARGUMENTS = {
+	("-v", "--verbose"): "Enable verbose output.",
+}
+
+def print_help(path: str="main.py", alignmentWidth: int=16) -> None:
+	"""
+	Output help menu to stdout upon request. LHS args are aligned to a fixed
+	width of alignmentWidth columns.
+	"""
+
+	# Shorthand alignment function for aligning to the ALIGNMENT_WIDTH.
+	align = lambda s: s + ' '*(alignmentWidth-len(s))
+
+	print(f"Usage: {path} [ARGUMENTS]")
+	print("Start the CyberTrace daemon.")
+	print()
+
+	print("Help:")
+	for key in H_ARGUMENTS:
+		print(align(", ".join([*key])) + H_ARGUMENTS[key])
+
+	print("Positional arguments:")
+	for key in P_ARGUMENTS:
+		print(align(", ".join([*key])) + P_ARGUMENTS[key])
+
+	print("Optional arguments:")
+	for key in O_ARGUMENTS:
+		print(align(", ".join([*key])) + O_ARGUMENTS[key])
+
+def main(args: list=["./main.py"]):
 
 	log(NORMAL, "Initializing CyberTrace daemon...")
+
+	# Parse CLI arguments.
+	path = args[0]
+	args = args[1::]
+
+	settings = {
+		"verbose": False,
+	}
+
+	# Parsing help arguments.
+	if any([arg in list(*H_ARGUMENTS.keys()) for arg in args]):
+		print_help(path)
+		return 0
+
+	# Parsing verbose arguments.
+	if any([arg in ("-v", "--verbose") for arg in args]):
+		try:
+			settings["verbose"] = True
+			args.remove("-v")
+			args.remove("--verbose")
+		except:
+			pass
+
+	log(NORMAL, "Options:")
+	log(NORMAL, f"| Verbose: {colored(settings['verbose'], 'yellow')}")
+
+	# Appending the path declares effective root for imports.
+	sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 	# Detection modules of type Module to be threaded by the daemon.
 	buffer   = []
@@ -66,4 +130,4 @@ def main():
 		traceback.print_exc()
 
 if __name__ == "__main__":
-	main()
+	main(sys.argv[0::])

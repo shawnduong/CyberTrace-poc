@@ -2,11 +2,14 @@
 
 import importlib
 import inspect
+import signal
 import sys
+import traceback
 import os
 
 from lib.Module import Module
 from lib.auxiliary import *
+from threading import Thread
 
 # Appending the path declares effective root for imports.
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -40,6 +43,26 @@ def main():
 		log(NORMAL, f"| -> {module.description}")
 
 	log(NORMAL, "Initialization complete.")
+
+	# Initialize all threads.
+	threads = [Thread(target=module.irun, args=(module,)) for module in modules]
+
+	# Run threads concurrently until a keyboard interrupt is detected.
+	try:
+		log(NORMAL, "Starting all threads.")
+		for thread in threads: thread.start()
+		for thread in threads: thread.join()
+
+	# Upon keyboard interrupt, send kill signals to all threads and join.
+	except KeyboardInterrupt:
+		log(WARNING, "Sending kill signals to all threads.")
+		for module in modules: module.kill(module)
+		for thread in threads: thread.join()
+
+	# Output but otherwise ignore other exception cases.
+	except:
+		log(EMERGENCY, "Other exception occurred:")
+		traceback.print_exc()
 
 if __name__ == "__main__":
 	main()

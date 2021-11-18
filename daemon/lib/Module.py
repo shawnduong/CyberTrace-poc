@@ -1,4 +1,5 @@
 import time
+import threading
 
 from lib.auxiliary import *
 from typing import Union
@@ -13,6 +14,9 @@ class Module:
 	name = None
 	version = None
 	description = None
+
+	# Thread event acts as a killswitch.
+	tevent = threading.Event()
 
 	# Module settings.
 
@@ -50,7 +54,7 @@ class Module:
 		and thread on.
 		"""
 
-		while True:
+		while not self.tevent.is_set():
 
 			start = time.time()
 			self.log(self, VERBOSE, "Starting interval...")
@@ -58,7 +62,15 @@ class Module:
 			self.log(self, VERBOSE, "Interval complete.")
 
 			if ((e:=time.time()) - start) < self.interval:
-				time.sleep(self.interval - (e-start))
+				self.tevent.wait(self.interval - (e-start))
 
 		self.log(self, VERBOSE, "Thread completed.")
+
+	def kill(self) -> None:
+		"""
+		Kill a thread gracefully by setting the event killswitch.
+		"""
+
+		self.log(self, EMERGENCY, "Thread kill signal received.")
+		self.tevent.set()
 

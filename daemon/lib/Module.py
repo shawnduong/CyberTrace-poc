@@ -1,3 +1,4 @@
+import socket
 import time
 import threading
 
@@ -15,11 +16,17 @@ class Module:
 	version = None
 	description = None
 
+	# Uniquely assigned module identification number.
+	mid = None
+
 	# Module verbosity setting.
 	verbose = False
 
 	# Thread event acts as a killswitch.
 	tevent = threading.Event()
+
+	# Socket for IPC.
+	sock = None
 
 	# Module settings.
 
@@ -52,13 +59,14 @@ class Module:
 
 		pass
 
-	def irun(self, verbosity: bool=False) -> None:
+	def irun(self, sock: socket.socket, verbosity: bool=False) -> None:
 		"""
 		Interval scheduler for the run method, which the daemon will search for
 		and thread on.
 		"""
 
 		self.verbose = verbosity
+		self.sock    = sock
 
 		while not self.tevent.is_set():
 
@@ -79,4 +87,21 @@ class Module:
 
 		self.log(self, EMERGENCY, "Thread kill signal received.")
 		self.tevent.set()
+
+	def alert(self, atype: int, amsg: str) -> None:
+		"""
+		Send an alert message amsg of type atype through a socket object sock.
+		This will send a message of the following low-level byte format:
+		[4 B mid][4 B atype][4 B len][len B amsg]
+		"""
+
+		self.log(self, NORMAL, f"ALERT (type={atype}): {amsg}")
+
+		msg  = b""
+		msg += self.mid.to_bytes(4, "big")
+		msg += atype.to_bytes(4, "big")
+		msg += len(amsg).to_bytes(4, "big")
+		msg += amsg.encode()
+
+		self.sock.send(msg)
 

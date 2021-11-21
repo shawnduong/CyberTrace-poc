@@ -7,9 +7,11 @@ class DirbusterNginx(Module):
 	version = "(stub)"
 	description = "Detect dirbuster attacks on an nginx server."
 
+	mid = 0x10000001
+
 	interval = 5
 
 	def run(self):
 
-		self.log(self, VERBOSE, "(stub)")
+		self.alert(self, 1, "(stub)")
 

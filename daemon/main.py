@@ -3,6 +3,7 @@
 import importlib
 import inspect
 import signal
+import socket
 import sys
 import traceback
 import os
@@ -14,6 +15,7 @@ from threading import Thread
 
 # Positional arguments.
 P_ARGUMENTS = {
+	("<SOCKET>",)  : "IPC socket path (default=\"/tmp/ctrace.sock\")",
 }
 
 # Optional help arguments.
@@ -35,7 +37,7 @@ def print_help(path: str="main.py", alignmentWidth: int=16) -> None:
 	# Shorthand alignment function for aligning to the ALIGNMENT_WIDTH.
 	align = lambda s: s + ' '*(alignmentWidth-len(s))
 
-	print(f"Usage: {path} [ARGUMENTS]")
+	print(f"Usage: {path} [ARGUMENTS] <SOCKET>")
 	print("Start the CyberTrace daemon.")
 	print()
 
@@ -53,14 +55,13 @@ def print_help(path: str="main.py", alignmentWidth: int=16) -> None:
 
 def main(args: list=["./main.py"]):
 
-	log(NORMAL, "Initializing CyberTrace daemon...")
-
 	# Parse CLI arguments.
 	path = args[0]
 	args = args[1::]
 
 	settings = {
-		"verbose": False,
+		"verbose"  : False,
+		"socket"   : "/tmp/ctrace.sock",
 	}
 
 	# Parsing help arguments.
@@ -77,8 +78,16 @@ def main(args: list=["./main.py"]):
 		except:
 			pass
 
+	# Parsing positional arguments.
+	try:
+		settings["socket"] = args.pop(0)
+	except:
+		pass
+
+	log(NORMAL, "Initializing CyberTrace daemon...")
 	log(NORMAL, "Options:")
-	log(NORMAL, f"| Verbose: {colored(settings['verbose'], 'yellow')}")
+	log(NORMAL, "| Verbose : %s" % colored(settings["verbose"], "yellow"))
+	log(NORMAL, "| Socket  : %s" % colored(settings["socket"], "yellow"))
 
 	# Appending the path declares effective root for imports.
 	sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -107,10 +116,27 @@ def main(args: list=["./main.py"]):
 		log(NORMAL, f"| {colored(module.name, 'green')} {module.version}")
 		log(NORMAL, f"| -> {module.description}")
 
+	# Create the socket.
+	s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+
+	try:
+		os.unlink(settings["socket"])
+	except OSError:
+		pass
+
+	s.bind(settings["socket"])
+	s.listen(1)
+
+	log(NORMAL, f"Serving data at IPC endpoint {settings['socket']}.")
+	log(NORMAL, f"Waiting for the middleware to connect to the socket...")
+
+	conn, addr = s.accept()
+	log(NORMAL, f"Connection established.")
+
 	log(NORMAL, "Initialization complete.")
 
 	# Initialize all threads.
-	threads = [Thread(target=module.irun, args=(module, settings["verbose"]))
+	threads = [Thread(target=module.irun, args=(module, conn, settings["verbose"]))
 		for module in modules]
 
 	# Run threads concurrently until a keyboard interrupt is detected.

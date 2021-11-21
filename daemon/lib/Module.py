@@ -15,6 +15,9 @@ class Module:
 	version = None
 	description = None
 
+	# Module verbosity setting.
+	verbose = False
+
 	# Thread event acts as a killswitch.
 	tevent = threading.Event()
 
@@ -38,7 +41,8 @@ class Module:
 		all logging messages.
 		"""
 
-		return log(msgType, f"[{self.name}] {msg}")
+		if msgType != VERBOSE or self.verbose:
+			return log(msgType, f"[{self.name}] {msg}")
 
 	def run(self) -> None:
 		"""
@@ -48,11 +52,13 @@ class Module:
 
 		pass
 
-	def irun(self) -> None:
+	def irun(self, verbosity: bool=False) -> None:
 		"""
 		Interval scheduler for the run method, which the daemon will search for
 		and thread on.
 		"""
+
+		self.verbose = verbosity
 
 		while not self.tevent.is_set():
 

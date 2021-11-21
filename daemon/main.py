@@ -110,7 +110,8 @@ def main(args: list=["./main.py"]):
 	log(NORMAL, "Initialization complete.")
 
 	# Initialize all threads.
-	threads = [Thread(target=module.irun, args=(module,)) for module in modules]
+	threads = [Thread(target=module.irun, args=(module, settings["verbose"]))
+		for module in modules]
 
 	# Run threads concurrently until a keyboard interrupt is detected.
 	try:

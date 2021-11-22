@@ -1,3 +1,4 @@
+import ipaddress
 import os
 import socket
 import time
@@ -158,18 +159,38 @@ class Module:
 		self.log(self, EMERGENCY, "Thread kill signal received.")
 		self.tevent.set()
 
-	def alert(self, atype: int, amsg: str) -> None:
+	def alert(self, ip: str, atype: int, amsg: str) -> None:
 		"""
 		Send an alert message amsg of type atype through a socket object sock.
 		This will send a message of the following low-level byte format:
-		[4 B mid][4 B atype][4 B len][len B amsg]
+		[4 B mid][4 B atype][1 B ipversion][(4|16) B ipaddr][4 B len][len B amsg]
 		"""
 
-		self.log(self, NORMAL, f"ALERT (type={atype}): {amsg}")
+		self.log(self, NORMAL, f"ALERT (type={atype}; ip={ip}): {amsg}")
+
+		ipversion = 0
+		ipaddr = 0
+
+		if ip != None:
+			if "." in ip:
+				ipversion = 4
+				ipaddr = int(ipaddress.IPv4Address(ip))
+			elif ":" in ip:
+				ipversion = 6
+				ipaddr = int(ipaddress.IPv6Address(ip))
 
 		msg  = b""
 		msg += self.mid.to_bytes(4, "big")
 		msg += atype.to_bytes(4, "big")
+		msg += ipversion.to_bytes(1, "big")
+
+		if ipversion == 4:
+			msg += ipaddr.to_bytes(4, "big")
+		elif ipversion == 6:
+			msg += ipaddr.to_bytes(16, "big")
+		else:
+			msg += ipaddr.to_bytes(1, "big")
+
 		msg += len(amsg).to_bytes(4, "big")
 		msg += amsg.encode()
 

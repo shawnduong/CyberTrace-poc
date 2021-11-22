@@ -4,18 +4,21 @@ import importlib
 import inspect
 import signal
 import socket
+import sqlalchemy
 import sys
 import traceback
 import os
 
-from lib.Module import Module
 from lib.auxiliary import *
+from lib.Module import Module
+from lib.ModuleDB import *
 from termcolor import colored
 from threading import Thread
 
 # Positional arguments.
 P_ARGUMENTS = {
-	("<SOCKET>",)  : "IPC socket path (default=\"/tmp/ctrace.sock\")",
+	("<SOCKET>",)    : "IPC socket path (default=\"/tmp/ctrace.sock\")",
+	("<DATABASE>",)  : "Module database path (default=\"/tmp/ctrace.db\")",
 }
 
 # Optional help arguments.
@@ -60,8 +63,9 @@ def main(args: list=["./main.py"]):
 	args = args[1::]
 
 	settings = {
-		"verbose"  : False,
-		"socket"   : "/tmp/ctrace.sock",
+		"verbose"   : False,
+		"socket"    : "/tmp/ctrace.sock",
+		"database"  : "/tmp/ctrace.db",
 	}
 
 	# Parsing help arguments.
@@ -81,16 +85,21 @@ def main(args: list=["./main.py"]):
 	# Parsing positional arguments.
 	try:
 		settings["socket"] = args.pop(0)
+		settings["database"] = args.pop(0)
 	except:
 		pass
 
 	log(NORMAL, "Initializing CyberTrace daemon...")
 	log(NORMAL, "Options:")
-	log(NORMAL, "| Verbose : %s" % colored(settings["verbose"], "yellow"))
-	log(NORMAL, "| Socket  : %s" % colored(settings["socket"], "yellow"))
+	log(NORMAL, "| Verbose  : %s" % colored(settings["verbose"], "yellow"))
+	log(NORMAL, "| Socket   : %s" % colored(settings["socket"], "yellow"))
+	log(NORMAL, "| Database : %s" % colored(settings["database"], "yellow"))
 
 	# Appending the path declares effective root for imports.
 	sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
+	# Create the module database.
+	db = ModuleDB(settings["database"])
 
 	# Detection modules of type Module to be threaded by the daemon.
 	buffer   = []
@@ -136,8 +145,8 @@ def main(args: list=["./main.py"]):
 	log(NORMAL, "Initialization complete.")
 
 	# Initialize all threads.
-	threads = [Thread(target=module.irun, args=(module, conn, settings["verbose"]))
-		for module in modules]
+	threads = [Thread(target=module.irun, args=(
+		module, db.session, conn, settings["verbose"])) for module in modules]
 
 	# Run threads concurrently until a keyboard interrupt is detected.
 	try:

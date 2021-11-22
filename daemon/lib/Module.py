@@ -4,6 +4,8 @@ import time
 import threading
 
 from lib.auxiliary import *
+from lib.ModuleDB import *
+from sqlalchemy.orm import Session
 from typing import Union
 
 class Module:
@@ -26,6 +28,9 @@ class Module:
 	# Thread event acts as a killswitch.
 	tevent = threading.Event()
 
+	# Database session.
+	db = None
+
 	# Socket for IPC.
 	sock = None
 
@@ -33,6 +38,9 @@ class Module:
 
 	# Minimum polling interval in seconds.
 	interval = 15
+
+	# A dictionary of alert/attack types.
+	atypes = {}
 
 	# List of string paths to resources requiring read (4) access.
 	rres = []
@@ -52,12 +60,14 @@ class Module:
 		if msgType != VERBOSE or self.verbose:
 			return log(msgType, f"[{self.name}] {msg}")
 
-	def init(self, sock: socket.socket, verbosity: bool=False) -> int:
+	def init(self, db: Session, sock: socket.socket, verbosity: bool=False) -> int:
 		"""
-		Initialize variables and ensure that all resources have sufficient
-		read, write, and/or executability permissions.
+		Initialize variables; ensure that all resources have sufficient read,
+		write, and/or executability permissions; and build the attack and alert
+		type database.
 		"""
 
+		self.db       = db
 		self.verbose  = verbosity
 		self.sock     = sock
 
@@ -85,6 +95,15 @@ class Module:
 				self.log(self, WARNING, f"{res} cannot be executed.")
 				exitCode = FAILURE
 
+		self.db.add(ModuleDB.Module(self.mid, self.name, self.version, self.description))
+		self.db.commit()
+
+		if len(self.atypes) > 0:
+			for k in self.atypes.keys():
+				self.db.add(ModuleDB.Attack(self.mid, k, self.atypes[k]))
+				self.db.commit()
+
+		self.log(self, VERBOSE, "Module and attack database built.")
 		self.log(self, VERBOSE, "Module initialization complete.")
 
 		return exitCode
@@ -97,13 +116,13 @@ class Module:
 
 		pass
 
-	def irun(self, sock: socket.socket, verbosity: bool=False) -> None:
+	def irun(self, db: Session, sock: socket.socket, verbosity: bool=False) -> None:
 		"""
 		Interval scheduler for the run method, which the daemon will search for
 		and thread on.
 		"""
 
-		if self.init(self, sock, verbosity) == FAILURE:
+		if self.init(self, db, sock, verbosity) == FAILURE:
 			self.log(self, EMERGENCY, "Module failed initialization.")
 			return
 

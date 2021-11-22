@@ -11,6 +11,14 @@ class DirbusterNginx(Module):
 
 	interval = 5
 
+	atypes = {
+		0x10000001: "Attack detected.",
+	}
+
+	rres = [
+		"/var/log/nginx.log",
+	]
+
 	def run(self):
 
 		self.alert(self, 1, "(stub)")

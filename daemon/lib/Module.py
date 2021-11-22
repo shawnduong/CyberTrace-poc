@@ -1,3 +1,4 @@
+import os
 import socket
 import time
 import threading
@@ -51,6 +52,43 @@ class Module:
 		if msgType != VERBOSE or self.verbose:
 			return log(msgType, f"[{self.name}] {msg}")
 
+	def init(self, sock: socket.socket, verbosity: bool=False) -> int:
+		"""
+		Initialize variables and ensure that all resources have sufficient
+		read, write, and/or executability permissions.
+		"""
+
+		self.verbose  = verbosity
+		self.sock     = sock
+
+		self.log(self, VERBOSE, "Initializing module...")
+
+		exitCode = SUCCESS
+
+		for res in set(self.rres + self.wres + self.xres):
+			if not os.access(res, os.F_OK):
+				self.log(self, WARNING, f"{res} could not be found.")
+				exitCode = FAILURE
+
+		for res in self.rres:
+			if not os.access(res, os.R_OK):
+				self.log(self, WARNING, f"{res} cannot be read from.")
+				exitCode = FAILURE
+
+		for res in self.wres:
+			if not os.access(res, os.W_OK):
+				self.log(self, WARNING, f"{res} cannot be written to.")
+				exitCode = FAILURE
+
+		for res in self.xres:
+			if not os.access(res, os.X_OK):
+				self.log(self, WARNING, f"{res} cannot be executed.")
+				exitCode = FAILURE
+
+		self.log(self, VERBOSE, "Module initialization complete.")
+
+		return exitCode
+
 	def run(self) -> None:
 		"""
 		Primary run method for the module, called on by the interval scheduler
@@ -65,8 +103,9 @@ class Module:
 		and thread on.
 		"""
 
-		self.verbose = verbosity
-		self.sock    = sock
+		if self.init(self, sock, verbosity) == FAILURE:
+			self.log(self, EMERGENCY, "Module failed initialization.")
+			return
 
 		while not self.tevent.is_set():
 

@@ -1,3 +1,4 @@
+import os
 import sqlalchemy as db
 
 from sqlalchemy.ext.declarative import declarative_base
@@ -61,6 +62,9 @@ class ModuleDB:
 			self.description  = description
 
 	def __init__(self, path: str):
+
+		if os.access(path, os.F_OK):
+			os.remove(path)
 
 		self.path     = path
 		self.engine   = db.create_engine(f"sqlite:///{path}")

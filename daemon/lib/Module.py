@@ -60,6 +60,14 @@ class Module:
 		if msgType != VERBOSE or self.verbose:
 			return log(msgType, f"[{self.name}] {msg}")
 
+	def mod_init(self) -> int:
+		"""
+		Module-defined initialization method, usually used for prerequisite
+		installation steps.
+		"""
+
+		return SUCCESS
+
 	def init(self, db: Session, sock: socket.socket, verbosity: bool=False) -> int:
 		"""
 		Initialize variables; ensure that all resources have sufficient read,
@@ -74,6 +82,10 @@ class Module:
 		self.log(self, VERBOSE, "Initializing module...")
 
 		exitCode = SUCCESS
+
+		if self.mod_init(self) == FAILURE:
+			self.log(self, WARNING, f"Module-defined initialization sequence failed.")
+			exitCode = FAILURE
 
 		for res in set(self.rres + self.wres + self.xres):
 			if not os.access(res, os.F_OK):

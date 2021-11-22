@@ -166,7 +166,7 @@ class Module:
 		[4 B mid][4 B atype][1 B ipversion][(4|16) B ipaddr][4 B len][len B amsg]
 		"""
 
-		self.log(self, NORMAL, f"ALERT (type={atype}; ip={ip}): {amsg}")
+		self.log(self, NORMAL, f"ALERT (type={hex(atype)}; ip={ip}): {amsg}")
 
 		ipversion = 0
 		ipaddr = 0

@@ -40,7 +40,7 @@ def print_help(path: str="main.py", alignmentWidth: int=16) -> None:
 	# Shorthand alignment function for aligning to the ALIGNMENT_WIDTH.
 	align = lambda s: s + ' '*(alignmentWidth-len(s))
 
-	print(f"Usage: {path} [ARGUMENTS] <SOCKET>")
+	print(f"Usage: {path} [ARGUMENTS] <SOCKET> <DATABASE>")
 	print("Start the CyberTrace daemon.")
 	print()
 

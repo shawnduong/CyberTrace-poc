@@ -1,8 +1,14 @@
 #!/usr/bin/env python3
 
+import socket
 import sys
+import time
+import traceback
 
 from lib.auxiliary import *
+
+# Polling interval in seconds.
+INTERVAL = 1
 
 # Positional arguments.
 P_ARGUMENTS = {
@@ -47,6 +53,14 @@ def print_help(path: str="main.py", alignmentWidth: int=16) -> None:
 	for key in O_ARGUMENTS:
 		print(align(", ".join([*key])) + O_ARGUMENTS[key])
 
+def forward(db: str, sock: socket.socket, ip: str, port: int, api: str) -> None:
+	"""
+	Receive some data from the socket and forward it to the API endpoint
+	in the form of JSON data.
+	"""
+
+	pass
+
 def main(args: list=["./main.py"]):
 
 	# Parse CLI arguments.
@@ -90,6 +104,48 @@ def main(args: list=["./main.py"]):
 	log(NORMAL, "| Endpoint : %s" % colored(
 		f"{settings['ip']}:{settings['port']}{settings['api']}", "yellow"))
 	log(NORMAL, "| Socket   : %s" % colored(settings["socket"], "yellow"))
+
+	# Create the socket.
+	s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+
+	log(NORMAL, "Connecting to the socket...")
+
+	# Connect to the socket.
+	while True:
+		try:
+			s.connect(settings["socket"])
+			log(NORMAL, "Connected.")
+			break
+		except:
+			time.sleep(1)
+
+	# Get the attack/alert database location.
+	n = int.from_bytes(s.recv(4), "big")
+	db = s.recv(n).decode()
+
+	# Forward the data from the daemon to the API indefinitely.
+	while True:
+
+		try:
+			log(VERBOSE, "Starting interval...")
+			start = time.time()
+
+			forward(db, s, settings["ip"], settings["port"], settings["api"])
+
+			if ((e:=time.time() - start) < INTERVAL):
+				time.sleep(INTERVAL - (e-start))
+
+			log(VERBOSE, "Interval complete.")
+
+		# Upon keyboard interrupt, kill the loop.
+		except KeyboardInterrupt:
+			log(EMERGENCY, "Keyboard interrupt detected. Killing middleware.", start="\r")
+			break
+
+		# Output but otherwise ignore other exception cases.
+		except:
+			log(EMERGENCY, "Other exception occurred:")
+			traceback.print_exc()
 
 if __name__ == "__main__":
 	main(sys.argv[0::])

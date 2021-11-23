@@ -6,6 +6,7 @@ import time
 import traceback
 
 from lib.auxiliary import *
+from lib.forward import *
 
 # Polling interval in seconds.
 INTERVAL = 1
@@ -52,14 +53,6 @@ def print_help(path: str="main.py", alignmentWidth: int=16) -> None:
 	print("Optional arguments:")
 	for key in O_ARGUMENTS:
 		print(align(", ".join([*key])) + O_ARGUMENTS[key])
-
-def forward(db: str, sock: socket.socket, ip: str, port: int, api: str) -> None:
-	"""
-	Receive some data from the socket and forward it to the API endpoint
-	in the form of JSON data.
-	"""
-
-	pass
 
 def main(args: list=["./main.py"]):
 

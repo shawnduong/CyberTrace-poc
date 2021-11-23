@@ -159,14 +159,14 @@ class Module:
 		self.log(self, EMERGENCY, "Thread kill signal received.")
 		self.tevent.set()
 
-	def alert(self, ip: str, atype: int, amsg: str) -> None:
+	def alert(self, ip: str, atype: int) -> None:
 		"""
 		Send an alert message amsg of type atype through a socket object sock.
 		This will send a message of the following low-level byte format:
-		[4 B mid][4 B atype][1 B ipversion][(4|16) B ipaddr][4 B len][len B amsg]
+		[4 B mid][4 B atype][1 B ipversion][(4|16) B ipaddr]
 		"""
 
-		self.log(self, NORMAL, f"ALERT (type={hex(atype)}; ip={ip}): {amsg}")
+		self.log(self, NORMAL, f"ALERT (type={hex(atype)}; ip={ip}): {self.atypes[atype]}")
 
 		ipversion = 0
 		ipaddr = 0
@@ -190,9 +190,6 @@ class Module:
 			msg += ipaddr.to_bytes(16, "big")
 		else:
 			msg += ipaddr.to_bytes(1, "big")
-
-		msg += len(amsg).to_bytes(4, "big")
-		msg += amsg.encode()
 
 		self.sock.send(msg)
 

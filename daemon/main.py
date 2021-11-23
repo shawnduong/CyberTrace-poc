@@ -140,6 +140,8 @@ def main(args: list=["./main.py"]):
 	log(NORMAL, f"Waiting for the middleware to connect to the socket...")
 
 	conn, addr = s.accept()
+	conn.send(len(settings["database"]).to_bytes(4, "big"))
+	conn.send(settings["database"].encode())
 	log(NORMAL, f"Connection established.")
 
 	log(NORMAL, "Initialization complete.")

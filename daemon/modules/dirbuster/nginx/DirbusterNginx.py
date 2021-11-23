@@ -138,6 +138,6 @@ class DirbusterNginx(Module):
 
 			# Dirbuster advertises itself in the user agent.
 			if "dirbuster" in data["http_user_agent"].lower() and data["remote_addr"] not in detected:
-				self.alert(self, data["remote_addr"], 0x10000001, self.atypes[0x10000001])
+				self.alert(self, data["remote_addr"], 0x10000001)
 				detected.append(data["remote_addr"])
 

@@ -7,9 +7,7 @@ import traceback
 
 from lib.auxiliary import *
 from lib.forward import *
-
-# Polling interval in seconds.
-INTERVAL = 1
+from lib.ModuleDB import *
 
 # Positional arguments.
 P_ARGUMENTS = {
@@ -114,21 +112,17 @@ def main(args: list=["./main.py"]):
 
 	# Get the attack/alert database location.
 	n = int.from_bytes(s.recv(4), "big")
-	db = s.recv(n).decode()
+	dbpath = s.recv(n).decode()
+
+	# Create the module database.
+	db = ModuleDB(dbpath, refresh=False)
 
 	# Forward the data from the daemon to the API indefinitely.
 	while True:
 
 		try:
-			log(VERBOSE, "Starting interval...")
-			start = time.time()
-
 			forward(db, s, settings["ip"], settings["port"], settings["api"])
-
-			if ((e:=time.time() - start) < INTERVAL):
-				time.sleep(INTERVAL - (e-start))
-
-			log(VERBOSE, "Interval complete.")
+			time.sleep(0.01)
 
 		# Upon keyboard interrupt, kill the loop.
 		except KeyboardInterrupt:

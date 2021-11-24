@@ -61,9 +61,9 @@ class ModuleDB:
 			self.attackID     = attackID
 			self.description  = description
 
-	def __init__(self, path: str):
+	def __init__(self, path: str, refresh: bool=True):
 
-		if os.access(path, os.F_OK):
+		if refresh and os.access(path, os.F_OK):
 			os.remove(path)
 
 		self.path     = path

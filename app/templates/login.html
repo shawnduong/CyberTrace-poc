@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Student Enrollment</title>
+    <link 
+      href="{{ url_for('static', filename='css/login.css') }}" 
+      rel="stylesheet" 
+      type="text/css" />
+  </head>
+  <body class="login">
+    <div class="login_form">
+      <div class="details">
+        <div class="welcome">CyberTrace</div>
+        <form action="{{ url_for('login') }}" method="post">
+          <div class="wrap">
+            <label>Username</label>
+            <input type="text" class="input" name="username">
+            </div>
+          <div class="wrap">
+            <label>Password</label>
+            <input 
+              type="password" 
+              class="input" 
+              data-type="password" 
+              name="password">
+            </div>
+          <button type="submit" class="button">
+            <h1 class="sign">LOGIN</h1>
+          </button>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,2 +1,6 @@
 /daemon/modules/dirbuster/nginx/links/
 /daemon/modules/dirbuster/nginx/wordlists/
+/app/__pycache__
+/app/database.sqlite
+.DS_Store
+**/.DS_Store

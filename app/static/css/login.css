@@ -1,0 +1,122 @@
+@import url(https://fonts.googleapis.com/css?family=Montserrat&display=swap);
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Montserrat", sans-serif;
+}
+
+:root {
+  --colour-one: #13273a; 
+  --colour-two: #1a354e;
+  --colour-three: #131a24;
+  --colour-four: #101f2b;
+  --colour-five: #184177;
+  --colour-six: #cfe9f5;
+  --colour-seven: #f3f3f3;
+  /* --colour-eight: #ffffff; */
+}
+
+body {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--colour-one);
+}
+
+.login_form {
+  position: relative;
+  background: var(--colour-one);
+  height: 400px;
+  box-shadow: 10px 10px 6px 2px var(--colour-four);
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+.details {
+  position: relative;
+  background: var(--colour-two);
+  height: 400px;
+  width: 350px;
+}
+
+.welcome {
+  position: absolute;
+  color: var(--colour-seven);
+  left: 30%;
+  top: 20%;
+  font-size: 25px;
+  font-weight: bolder;
+}
+
+.wrap:nth-child(1) {
+  position: absolute;
+  top: 35%;
+  left: 20%;
+  margin: 12px;
+}
+
+.wrap:nth-child(2) {
+  position: absolute;
+  top: 50%;
+  left: 20%;
+  font-size: 15px;
+  margin: 12px;
+}
+
+.wrap:nth-child(3) {
+  position: absolute;
+  top: 68%;
+  left: 20%;
+  font-size: 15px;
+  margin: 12px;
+}
+
+.input {
+  border: 1px solid var(--colour-three);
+  padding: 5px 20px;
+  margin: 5px;
+  border-radius: 5px;
+  background: none;
+  color: var(--colour-seven);
+  box-shadow: inset 10px 10px 6px -5px var(--colour-four);
+}
+
+label {
+  color: var(--colour-seven);
+  display: block;
+}
+
+.button {
+  background: var(--colour-six);
+  position: absolute;
+  width: 60%;
+  top: 70%;
+  right: 16%;
+  padding: 5px 5px 10px 5px;
+  color: var(--colour-one);
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.button .sign {
+  color: var(--colour-one);
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: bolder;
+}
+
+.button:hover {
+  opacity: 90%;
+}
+
+
+
+#failalert {
+  position: relative;
+  top: 85%;
+  left: 20%;
+}

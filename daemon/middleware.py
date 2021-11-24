@@ -6,6 +6,7 @@ import time
 import traceback
 
 from lib.auxiliary import *
+from lib.CacheDB import *
 from lib.forward import *
 from lib.ModuleDB import *
 
@@ -15,6 +16,7 @@ P_ARGUMENTS = {
 	("<PORT>",)    : "Port on the <IP> the API resides on (default=8080)",
 	("<API>",)     : "API endpoint to POST to (default=\"/api/report\")",
 	("<SOCKET>",)  : "IPC socket path (default=\"/tmp/ctrace.sock\")",
+	("<CACHE>",)   : "Cache database path (default=\"/tmp/ctrace_CACHE.db\")",
 }
 
 # Optional help arguments.
@@ -36,7 +38,7 @@ def print_help(path: str="main.py", alignmentWidth: int=16) -> None:
 	# Shorthand alignment function for aligning to the ALIGNMENT_WIDTH.
 	align = lambda s: s + ' '*(alignmentWidth-len(s))
 
-	print(f"Usage: {path} [ARGUMENTS] <IP> <PORT> <API> <SOCKET>")
+	print(f"Usage: {path} [ARGUMENTS] <IP> <PORT> <API> <SOCKET> <CACHE>")
 	print("Start the CyberTrace middleware that connects the daemon to the API.")
 	print()
 
@@ -59,11 +61,12 @@ def main(args: list=["./main.py"]):
 	args = args[1::]
 
 	settings = {
-		"verbose"   : False,
-		"ip"        : "127.0.0.1",
-		"port"      : 8080,
-		"api"       : "/api/report",
-		"socket"    : "/tmp/ctrace.sock",
+		"verbose"  : False,
+		"ip"       : "127.0.0.1",
+		"port"     : 8080,
+		"api"      : "/api/report",
+		"socket"   : "/tmp/ctrace.sock",
+		"cache"    : "/tmp/ctrace_CACHE.db",
 	}
 
 	# Parsing help arguments.
@@ -86,6 +89,7 @@ def main(args: list=["./main.py"]):
 		settings["port"]    = args.pop(0)
 		settings["api"]     = args.pop(0)
 		settings["socket"]  = args.pop(0)
+		settings["cache"]   = args.pop(0)
 	except:
 		pass
 
@@ -116,6 +120,9 @@ def main(args: list=["./main.py"]):
 
 	# Create the module database.
 	db = ModuleDB(dbpath, refresh=False)
+
+	# Create the cache database.
+	cache = CacheDB(settings["cache"])
 
 	# Forward the data from the daemon to the API indefinitely.
 	while True:

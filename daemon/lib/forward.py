@@ -4,10 +4,12 @@ import socket
 import time
 
 from lib.auxiliary import *
+from lib.CacheDB import *
+from lib.ipgeo import *
 from lib.ModuleDB import *
 from termcolor import colored
 
-def forward(db: ModuleDB, sock: socket.socket, ip: str, port: int, api: str) -> None:
+def forward(db: ModuleDB, cache: CacheDB, sock: socket.socket, ip: str, port: int, api: str) -> None:
 	"""
 	Receive some data from the socket and forward it to the given API endpoint
 	ip:port/api in the form of JSON data.
@@ -77,6 +79,17 @@ def forward(db: ModuleDB, sock: socket.socket, ip: str, port: int, api: str) -> 
 			json["attacker_ip_address"] = str(ipaddress.IPv6Address(data[9:25]))
 		else:
 			json["attacker_ip_address"] = "IP UNKNOWN"
+
+		# Get the attacker coordinates, first checking the cache.
+		if q:=cache.session.query(cache.IP).filter_by(ip=json["attacker_ip_address"]).first():
+			print("FOUND IN CACHE")
+			json["attacker_lat"] = q.latitude
+			json["attacker_lon"] = q.longitude
+		else:
+			json["attacker_lat"], json["attacker_lon"] = ipgeo(json["attacker_ip_address"])
+			cache.session.add(cache.IP(
+				json["attacker_ip_address"], json["attacker_lat"], json["attacker_lon"]))
+			cache.session.commit()
 
 		# Discard the now-processed data.
 		if json["attacker_ip_version"] == 4:

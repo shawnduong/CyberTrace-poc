@@ -128,7 +128,7 @@ def main(args: list=["./main.py"]):
 	while True:
 
 		try:
-			forward(db, s, settings["ip"], settings["port"], settings["api"])
+			forward(db, cache, s, settings["ip"], settings["port"], settings["api"])
 			time.sleep(0.01)
 
 		# Upon keyboard interrupt, kill the loop.

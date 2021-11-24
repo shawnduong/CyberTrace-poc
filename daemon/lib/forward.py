@@ -11,7 +11,7 @@ from termcolor import colored
 
 def forward(
 	db: ModuleDB, cache: CacheDB, sock: socket.socket, selfIP: str,
-	ip: str, port: int, api: str) -> None:
+	proto: str, ip: str, port: int, api: str) -> None:
 	"""
 	Receive some data from the socket and forward it to the given API endpoint
 	ip:port/api in the form of JSON data.
@@ -119,6 +119,14 @@ def forward(
 		else:
 			data = data[25:]
 
+		# POST to the API endpoint.
+		r = requests.post(f"{proto}://{ip}:{port}{api}", json=json)
+
+		# Check the status code.
+		if r.status_code != 200:
+			log(WARNING, f"POST request to {ip}:{port}{api} got status code {r.status_code}")
+			return FAILURE
+
 		# POST logging output.
 		log(NORMAL, f"POST {ip}:{port}{api}")
 		log(NORMAL, "| {")
@@ -130,4 +138,3 @@ def forward(
 				log(NORMAL, f"|     \"{k}\": %s," % colored(f"{json[k]}", "yellow"))
 
 		log(NORMAL, "| }")
-

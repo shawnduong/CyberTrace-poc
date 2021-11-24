@@ -13,6 +13,7 @@ from lib.ModuleDB import *
 
 # Positional arguments.
 P_ARGUMENTS = {
+	("<PROTO>",)   : "Protocol the API is using (default=\"http\"; https unsupported currently)",
 	("<IP>",)      : "IP address the API resides on (default=\"127.0.0.1\")",
 	("<PORT>",)    : "Port on the <IP> the API resides on (default=8080)",
 	("<API>",)     : "API endpoint to POST to (default=\"/api/report\")",
@@ -39,7 +40,7 @@ def print_help(path: str="main.py", alignmentWidth: int=16) -> None:
 	# Shorthand alignment function for aligning to the ALIGNMENT_WIDTH.
 	align = lambda s: s + ' '*(alignmentWidth-len(s))
 
-	print(f"Usage: {path} [ARGUMENTS] <IP> <PORT> <API> <SOCKET> <CACHE>")
+	print(f"Usage: {path} [ARGUMENTS] <PROTO> <IP> <PORT> <API> <SOCKET> <CACHE>")
 	print("Start the CyberTrace middleware that connects the daemon to the API.")
 	print()
 
@@ -63,6 +64,7 @@ def main(args: list=["./main.py"]):
 
 	settings = {
 		"verbose"  : False,
+		"proto"    : "http",
 		"ip"       : "127.0.0.1",
 		"port"     : 8080,
 		"api"      : "/api/report",
@@ -86,6 +88,7 @@ def main(args: list=["./main.py"]):
 
 	# Parsing positional arguments.
 	try:
+		settings["proto"]   = args.pop(0)
 		settings["ip"]      = args.pop(0)
 		settings["port"]    = args.pop(0)
 		settings["api"]     = args.pop(0)
@@ -98,7 +101,7 @@ def main(args: list=["./main.py"]):
 	log(NORMAL, "Options:")
 	log(NORMAL, "| Verbose  : %s" % colored(settings["verbose"], "yellow"))
 	log(NORMAL, "| Endpoint : %s" % colored(
-		f"{settings['ip']}:{settings['port']}{settings['api']}", "yellow"))
+		f"{settings['proto']}://{settings['ip']}:{settings['port']}{settings['api']}", "yellow"))
 	log(NORMAL, "| Socket   : %s" % colored(settings["socket"], "yellow"))
 
 	# Create the socket.
@@ -137,7 +140,8 @@ def main(args: list=["./main.py"]):
 	while True:
 
 		try:
-			forward(db, cache, s, selfIP, settings["ip"], settings["port"], settings["api"])
+			forward(db, cache, s, selfIP,
+				settings["proto"], settings["ip"], settings["port"], settings["api"])
 			time.sleep(0.01)
 
 		# Upon keyboard interrupt, kill the loop.

@@ -9,7 +9,9 @@ from lib.ipgeo import *
 from lib.ModuleDB import *
 from termcolor import colored
 
-def forward(db: ModuleDB, cache: CacheDB, sock: socket.socket, ip: str, port: int, api: str) -> None:
+def forward(
+	db: ModuleDB, cache: CacheDB, sock: socket.socket, selfIP: str,
+	ip: str, port: int, api: str) -> None:
 	"""
 	Receive some data from the socket and forward it to the given API endpoint
 	ip:port/api in the form of JSON data.
@@ -69,6 +71,27 @@ def forward(db: ModuleDB, cache: CacheDB, sock: socket.socket, ip: str, port: in
 		# Attack information.
 		json["attack_description"] = attack.description
 
+		# Victim IP version.
+		if "." in selfIP:
+			json["victim_ip_version"] = 4
+		elif ":" in selfIP:
+			json["victim_ip_version"] = 6
+		else:
+			json["victim_ip_version"] = -1
+
+		# Victim IP address.
+		json["victim_ip_address"] = selfIP
+
+		# Get the victim coordinates, first checking the cache.
+		if q:=cache.session.query(cache.IP).filter_by(ip=selfIP).first():
+			json["victim_lat"] = q.latitude
+			json["victim_lon"] = q.longitude
+		else:
+			json["victim_lat"], json["victim_lon"] = ipgeo(selfIP)
+			cache.session.add(cache.IP(
+				json["victim_ip_address"], json["victim_lat"], json["victim_lon"]))
+			cache.session.commit()
+
 		# Attacker IP version.
 		json["attacker_ip_version"] = int(data[8])
 
@@ -82,7 +105,6 @@ def forward(db: ModuleDB, cache: CacheDB, sock: socket.socket, ip: str, port: in
 
 		# Get the attacker coordinates, first checking the cache.
 		if q:=cache.session.query(cache.IP).filter_by(ip=json["attacker_ip_address"]).first():
-			print("FOUND IN CACHE")
 			json["attacker_lat"] = q.latitude
 			json["attacker_lon"] = q.longitude
 		else:

@@ -7,6 +7,7 @@ import traceback
 
 from lib.auxiliary import *
 from lib.CacheDB import *
+from lib.ipgeo import *
 from lib.forward import *
 from lib.ModuleDB import *
 
@@ -124,11 +125,19 @@ def main(args: list=["./main.py"]):
 	# Create the cache database.
 	cache = CacheDB(settings["cache"])
 
+	# Get self IP and coordinates.
+	selfIP, lat, lon = ipgeo("")
+
+	# Cache self IP and coordinates if nonexistent.
+	if not cache.session.query(cache.IP).filter_by(ip=selfIP).first():
+		cache.session.add(cache.IP(selfIP, lat, lon))
+		cache.session.commit()
+
 	# Forward the data from the daemon to the API indefinitely.
 	while True:
 
 		try:
-			forward(db, cache, s, settings["ip"], settings["port"], settings["api"])
+			forward(db, cache, s, selfIP, settings["ip"], settings["port"], settings["api"])
 			time.sleep(0.01)
 
 		# Upon keyboard interrupt, kill the loop.

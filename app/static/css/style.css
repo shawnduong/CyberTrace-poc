@@ -81,6 +81,7 @@ body {
 .button {
 	background-color: var(--button);
 	border: none;
+	border-radius: 4px;
 	font-family: Montserrat;
 	font-size: 18px;
 	padding: 8px;

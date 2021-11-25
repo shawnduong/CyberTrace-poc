@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+	<head>
+
+		<meta charset = "utf-8"/>
+		<meta name = "viewport" content = "width=device-width"/>
+		<title>CyberTrace Map</title>
+		<link rel = "stylesheet" href = "{{ url_for('static', filename='css/vectormap.css') }}" type = "text/css"/>
+		
+	</head>
+
+	<body onmousemove = "map_coord(event)">
+
+		<div id = "maxMapSize">
+			<img ondragstart = "return false" id = "dragMap" src = "{{ url_for('static', filename='assets/svg/CyberTraceMap2.svg') }}"/>
+		</div>
+
+		<input type = "button" id = "zoomIn" class = "zoomButtons" value = "Zoom In"/>
+		<input type = "button" id = "zoomOut" class = "zoomButtons" value = "Zoom Out"/>
+
+		x:<input type = "button" id = "x"/>
+		y:<input type = "button" id = "y"/>
+
+	</body>
+
+	<script src = "/static/js/vectormap.js"></script>
+
+</html>

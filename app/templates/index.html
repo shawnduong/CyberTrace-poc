@@ -21,18 +21,21 @@
 
 		<div id="splash-login">
 			<div id="login">
-				<form>
+				<form action="/login" method="POST">
 					<h2>Authentication</h2>
 					<br>
 					<label for="username">Username</label>
 					<br>
-					<input type="text" id="name" name="name" class="input-field">
+					<input type="text" id="username" name="username" class="input-field">
 					<br>
 					<label for="password">Password</label>
 					<br>
 					<input type="password" id="password" name="password" class="input-field">
 					<br><br>
 					<button id="submit" class="button">Log In</button>
+					{% if failed %}
+						<h5 id="login-failed">Login failed. Please try again.</h5>
+					{% endif %}
 				</form>
 				<br><br>
 				<p><i>Don't have an account? <a href="">Sign up for one.</a></i></p>

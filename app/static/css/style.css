@@ -53,6 +53,13 @@ body {
 	transform: translate(-50%, -50%);
 }
 
+#login-failed {
+	color: red;
+	display: inline-block;
+	padding-left: 8px;
+	font-family: Montserrat;
+}
+
 #splash {
 	display: grid;
 	grid-template-columns: 50% 50%;

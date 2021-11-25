@@ -33,6 +33,13 @@ body {
 	background-color: var(--site-background);
 }
 
+#links {
+	position: absolute;
+	bottom: 10%;
+	left: 0;
+	margin-left: 7%;
+}
+
 #login {
 	background-color: var(--grey-a);
 	border-radius: 8px;

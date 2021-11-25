@@ -55,20 +55,20 @@ body {
 	width: 100%;
 }
 
-#splash-left {
-	background-color: var(--grey-a);
-	color: var(--text-a);
-}
-
-#splash-right {
+#splash-login {
 	background-color: var(--grey-b);
 	color: var(--text-b);
 }
 
 #splash-title {
+	color: var(--text-a);
 	font-family: Source;
-	margin-top: 25%;
-	margin-left: 25%;
+
+	position: absolute;
+	top: 0;
+	left: 0;
+	margin-top: 15%;
+	margin-left: 15%;
 }
 
 .button {

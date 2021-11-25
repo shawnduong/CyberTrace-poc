@@ -7,11 +7,11 @@
 
 	<div id="splash">
 
-		<div id="splash-left">
+		<div id="particles-js">
 			<h1 id="splash-title"></h1>
 		</div>
 
-		<div id="splash-right">
+		<div id="splash-login">
 			<div id="login">
 				<form>
 					<h2>Authentication</h2>
@@ -34,9 +34,15 @@
 	</div>
 
 	<script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='js/particles.js') }}"></script>
 	<script src="{{ url_for('static', filename='js/typewriter.js') }}"></script>
 
 	<script>
+		particlesJS.load("particles-js", "{{ url_for('static', filename='json/particles.json') }}", function()
+		{
+			console.log("particles.js loaded.");
+		});
+
 		$(document).ready(function()
 		{
 			typewriter($("#splash-title"), "CyberTrace");

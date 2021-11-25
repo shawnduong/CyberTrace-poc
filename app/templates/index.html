@@ -8,7 +8,10 @@
 	<div id="splash">
 
 		<div id="particles-js">
-			<h1 id="splash-title"></h1>
+			<div id="splash-text">
+				<h1 id="splash-title"></h1>
+				<h2 id="splash-subtitle"></h2>
+			</div>
 		</div>
 
 		<div id="splash-login">
@@ -45,7 +48,8 @@
 
 		$(document).ready(function()
 		{
-			typewriter($("#splash-title"), "CyberTrace");
+			typewriter($("#splash-title"), "CyberTrace", 100);
+			typewriter_d($("#splash-subtitle"), "A new way to track cyberattacks.", 50, 2000);
 		});
 	</script>
 

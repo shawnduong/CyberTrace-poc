@@ -60,15 +60,15 @@ body {
 	color: var(--text-b);
 }
 
-#splash-title {
+#splash-text {
 	color: var(--text-a);
 	font-family: Source;
 
 	position: absolute;
 	top: 0;
 	left: 0;
-	margin-top: 15%;
-	margin-left: 15%;
+	margin-top: 10%;
+	margin-left: 7%;
 }
 
 .button {

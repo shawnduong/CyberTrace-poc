@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+{% include "head.html" %}
+
+<body>
+
+	<div id="splash">
+
+		<div id="splash-left">
+			<h1 id="splash-title"></h1>
+		</div>
+
+		<div id="splash-right">
+			<div id="login">
+				<form>
+					<h2>Authentication</h2>
+					<br>
+					<label for="username">Username</label>
+					<br>
+					<input type="text" id="name" name="name" class="input-field">
+					<br>
+					<label for="password">Password</label>
+					<br>
+					<input type="password" id="password" name="password" class="input-field">
+					<br><br>
+					<button id="submit" class="button">Log In</button>
+				</form>
+				<br><br>
+				<p><i>Don't have an account? <a href="">Sign up for one.</a></i></p>
+			</div>
+		</div>
+
+	</div>
+
+	<script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='js/typewriter.js') }}"></script>
+
+	<script>
+		$(document).ready(function()
+		{
+			typewriter($("#splash-title"), "CyberTrace");
+		});
+	</script>
+
+</body>
+
+</html>

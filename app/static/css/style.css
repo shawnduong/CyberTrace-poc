@@ -1,0 +1,93 @@
+:root {
+	/* Default site background. */
+	--site-background:  #000000;
+
+	/* Primary (darker) grey shade and complement text. */
+	--grey-a:           #101416;
+	--text-a:           #EFEBE9;
+
+	/* Secondary (lighter) grey shade and complement text. */
+	--grey-b:           #25292B;
+	--text-b:           #DAD6D4;
+
+	/* Button colors. */
+	--button:           #93C14D;
+}
+
+@font-face {
+	font-family: Source;
+	src: url("/static/ttf/SourceCodePro-Regular.ttf");
+}
+
+@font-face {
+	font-family: Montserrat;
+	src: url("/static/ttf/Montserrat-Regular.ttf");
+}
+
+* {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	background-color: var(--site-background);
+}
+
+#login {
+	background-color: var(--grey-a);
+	border-radius: 8px;
+	font-family: Montserrat;
+
+	display: inline-block;
+	padding: 16px;
+	position: relative;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+#splash {
+	display: grid;
+	grid-template-columns: 50% 50%;
+	grid-template-rows: 100% 100%;
+
+	height: 100vh;
+	width: 100%;
+}
+
+#splash-left {
+	background-color: var(--grey-a);
+	color: var(--text-a);
+}
+
+#splash-right {
+	background-color: var(--grey-b);
+	color: var(--text-b);
+}
+
+#splash-title {
+	font-family: Source;
+	margin-top: 25%;
+	margin-left: 25%;
+}
+
+.button {
+	background-color: var(--button);
+	border: none;
+	font-family: Montserrat;
+	font-size: 18px;
+	padding: 8px;
+}
+
+.input-field {
+	background-color: var(--grey-b);
+	border-style: none;
+	color: var(--text-b);
+	caret-color: var(--text-b);
+	font-family: Source;
+	font-size: 24px;
+
+	margin-top: 4px;
+	margin-bottom: 4px;
+	width: 100%;
+}

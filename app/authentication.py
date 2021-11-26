@@ -5,7 +5,7 @@ from app import *
 
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
-from flask_login import LoginManager
+from flask_login import LoginManager, login_user
 
 # Define the admin interface.
 admin = Admin(app, name="Administrative Dashboard", template_mode="bootstrap3")
@@ -53,7 +53,7 @@ def load_user(id: int):
 	Load a user using their id.
 	"""
 
-	return User.query.filter(User.id == int(id)).first()
+	return User.query.get(id)
 
 @app.route("/login", methods=["POST"])
 def login():
@@ -86,13 +86,14 @@ def login():
 
 		# Successful login, account type admin.
 		elif user.acctType == 0:
-			# Stub.
-			return render_template("index.html")
+			login_user(user)
+			return redirect(url_for("admin.index"))
 
 		# Successful login, account type non-admin.
 		else:
 			# Stub.
-			return render_template("index.html")
+			login_user(user)
+			return redirect(url_for("stub"))
 
 	# Undefined behavior.
 	else:

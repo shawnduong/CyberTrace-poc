@@ -90,10 +90,14 @@ def login():
 			return redirect(url_for("admin.index"))
 
 		# Successful login, account type non-admin.
-		else:
+		elif user.acctType == 1:
 			# Stub.
 			login_user(user)
 			return redirect(url_for("stub"))
+
+		# Successful login, account type pending.
+		elif user.acctType == 2:
+			return render_template("index.html", pending_approval=True)
 
 	# Undefined behavior.
 	else:

@@ -22,7 +22,7 @@
 		<div id="splash-login">
 			<div id="login">
 				<form action="/login" method="POST">
-					<h2>Authentication</h2>
+					<h2 id="authentication">Authentication</h2>
 					<br>
 					<label for="username">Username</label>
 					<br>
@@ -32,13 +32,14 @@
 					<br>
 					<input type="password" id="password" name="password" class="input-field">
 					<br><br>
-					<button id="submit" class="button">Log In</button>
+					<input type="hidden" id="login-type" name="login-type" value="login">
+					<button id="login-submit" class="button">Log In</button>
 					{% if failed %}
 						<h5 id="login-failed">Login failed. Please try again.</h5>
 					{% endif %}
 				</form>
 				<br><br>
-				<p><i>Don't have an account? <a href="">Sign up for one.</a></i></p>
+				<p id="signup">Don't have an account? Sign up for one.</p>
 			</div>
 		</div>
 
@@ -58,6 +59,35 @@
 		{
 			typewriter($("#splash-title"), "CyberTrace", 100);
 			typewriter_d($("#splash-subtitle"), "A new way to track cyberattacks.", 50, 2000);
+		});
+
+		$("#signup").click(function()
+		{
+			rtypewriter($("#authentication"), 50);
+			rtypewriter($("#signup"), 15);
+			rtypewriter($("#login-submit"), 75);
+
+			/* Switch from authentication to registration. */
+			if ($("#login-type").attr("value") == "login")
+			{
+				$("#login-type").attr("value", "signup");
+				typewriter_d($("#authentication"), "Registration", 50, 800);
+				typewriter_d($("#signup"), "Already have an account? Log in.", 15, 800);
+				typewriter_d($("#login-submit"), "Sign Up", 60, 800);
+
+				if ($("#login-failed"))
+				{
+					rtypewriter($("#login-failed"), 10);
+				}
+			}
+			/* Switch from registration to authentication. */
+			else
+			{
+				$("#login-type").attr("value", "login");
+				typewriter_d($("#authentication"), "Authentication", 50, 800);
+				typewriter_d($("#signup"), "Don't have an account? Sign up for one.", 15, 800);
+				typewriter_d($("#login-submit"), "Log In", 60, 800);
+			}
 		});
 	</script>
 

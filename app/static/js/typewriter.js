@@ -22,3 +22,20 @@ async function typewriter_d(object, text, speed, delay)
 	await sleep(delay);
 	typewriter(object, text, speed);
 }
+
+/* typewriter, but in reverse. */
+async function rtypewriter(object, speed)
+{
+	while (object.text().length > 0)
+	{
+		await sleep(speed);
+		object.text(object.text().slice(0, object.text().length-1));
+	}
+}
+
+/* typewriter_d, but in reverse. */
+async function rtypewriter_d(object, speed, delay)
+{
+	await sleep(delay);
+	rtypewriter(object, speed);
+}

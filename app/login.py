@@ -21,7 +21,6 @@ def login():
 	# Successful login, account type admin.
 	elif user.acctType == 0:
 		# Stub.
-		print("DEBUG: acctType=1 => ADMIN ACCOUNT")
 		return render_template("index.html")
 
 	# Successful login, account type non-admin.

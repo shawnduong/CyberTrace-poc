@@ -12,6 +12,9 @@
 
 	/* Button colors. */
 	--button:           #93C14D;
+
+	/* URL color. */
+	--url:              #4D93C1;
 }
 
 @font-face {
@@ -33,6 +36,10 @@ body {
 	background-color: var(--site-background);
 }
 
+#authentication {
+	height: 1ch;
+}
+
 #links {
 	position: absolute;
 	bottom: 10%;
@@ -44,6 +51,7 @@ body {
 	background-color: var(--grey-a);
 	border-radius: 8px;
 	font-family: Montserrat;
+	width: 42ch;
 
 	display: inline-block;
 	padding: 16px;
@@ -58,6 +66,24 @@ body {
 	display: inline-block;
 	padding-left: 8px;
 	font-family: Montserrat;
+}
+
+#login-submit {
+	font-family: Montserrat;
+	font-size: 18px;
+	text-align: left;
+	height: 3ch;
+	width: 8ch;
+}
+
+#signup {
+	color: var(--url);
+	font-style: italic;
+	height: 1ch;
+}
+
+#signup:hover {
+	cursor: pointer;
 }
 
 #splash {
@@ -89,9 +115,11 @@ body {
 	background-color: var(--button);
 	border: none;
 	border-radius: 4px;
-	font-family: Montserrat;
-	font-size: 18px;
 	padding: 8px;
+}
+
+.button:hover {
+	cursor: pointer;
 }
 
 .input-field {

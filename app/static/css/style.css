@@ -15,6 +15,12 @@
 
 	/* URL color. */
 	--url:              #4D93C1;
+
+	/* Success (green) color. */
+	--success:          #93C14D;
+
+	/* Attention (red) color. */
+	--attention:        #FB0A66;
 }
 
 @font-face {
@@ -62,7 +68,7 @@ body {
 }
 
 #login-failed {
-	color: red;
+	color: var(--attention);
 	display: inline-block;
 	padding-left: 8px;
 	font-family: Montserrat;
@@ -74,6 +80,20 @@ body {
 	text-align: left;
 	height: 3ch;
 	width: 8ch;
+}
+
+#registration-rejected {
+	color: var(--attention);
+	display: inline-block;
+	padding-left: 8px;
+	font-family: Montserrat;
+}
+
+#registration-pending {
+	color: var(--success);
+	display: inline-block;
+	padding-left: 8px;
+	font-family: Montserrat;
 }
 
 #signup {

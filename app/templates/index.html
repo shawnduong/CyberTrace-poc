@@ -21,7 +21,7 @@
 
 		<div id="splash-login">
 			<div id="login">
-				<form action="/login" method="POST">
+				<form id="login-form" action="/login" method="POST">
 					<h2 id="authentication">Authentication</h2>
 					<br>
 					<label for="username">Username</label>
@@ -36,6 +36,10 @@
 					<button id="login-submit" class="button">Log In</button>
 					{% if failed %}
 						<h5 id="login-failed">Login failed. Please try again.</h5>
+					{% elif rejected %}
+						<h5 id="registration-rejected">Registration failed. Please try again.</h5>
+					{% elif pending %}
+						<h5 id="registration-pending">Registration awaiting admin approval.</h5>
 					{% endif %}
 				</form>
 				<br><br>

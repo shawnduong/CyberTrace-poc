@@ -12,9 +12,17 @@ $("#signup").click(function()
 		typewriter_d($("#signup"), "Already have an account? Log in.", 15, 800);
 		typewriter_d($("#login-submit"), "Sign Up", 60, 800);
 
-		if ($("#login-failed"))
+		if ($("#login-failed").text().length > 0)
 		{
 			rtypewriter($("#login-failed"), 10);
+		}
+		else if ($("#registration-rejected").text().length > 0)
+		{
+			rtypewriter($("#registration-rejected"), 10);
+		}
+		else if ($("#registration-pending").text().length > 0)
+		{
+			rtypewriter($("#registration-pending"), 10);
 		}
 	}
 	/* Switch from registration to authentication. */

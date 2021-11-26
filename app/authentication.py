@@ -99,9 +99,8 @@ def login():
 
 		# Successful login, account type non-admin.
 		elif user.acctType == 1:
-			# Stub.
 			login_user(user)
-			return redirect(url_for("stub"))
+			return redirect(url_for("application"))
 
 		# Successful login, account type pending.
 		elif user.acctType == 2:

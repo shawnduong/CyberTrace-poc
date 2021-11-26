@@ -1,0 +1,25 @@
+{% extends 'admin/master.html' %}
+
+{% block body %}
+
+	{% if current_user.acctType != 0 %}
+		<div style="margin: 10%;">
+			<h1>Unauthorized Access</h1>
+			<p>You do not have sufficient permissions to view this page.</p>
+		</div>
+	{% else %}
+		<div style="margin: 10%;">
+			<h1>CyberTrace Administrative Panel</h1>
+			<p>Welcome to the CyberTrace administrative panel. Here, you can manage accounts. Accounts of type <b>0</b> are administrative accounts, type <b>1</b> are user accounts, and type <b>2</b> are pending accounts. For security reasons, pending accounts require administrator approval before they can become user or administrative accounts. All new registrations are pending by default.</p>
+
+			<h2>Documentation</h2>
+			<p>CyberTrace's knowledge base is currently a work in progress and contains limited information about the project as of now, but it is continually being built and authored over time.</p>
+			<p>Documentation about CyberTrace can be found on <a href="https://github.com/shawnduong/CyberTrace/wiki">CyberTrace's official wiki.</a></p>
+
+			<h2>Contributing</h2>
+			<p>CyberTrace is a work in progress. Contributors are welcome to fork, commit, and send PRs, and PRs that are useful to the project will be approved. Alternatively, you can contribute by finding and reporting bugs, opening or responding to issues, and/or writing documentation.</p>
+			<p>More information about contributing can be found on <a href="https://github.com/shawnduong/CyberTrace/wiki/Contribution-Guide">CyberTrace's Contribution Guide.</a></p>
+		</div>
+	{% endif %}
+
+{% endblock %}

@@ -8,7 +8,7 @@ from flask_admin.contrib.sqla import ModelView
 from flask_login import LoginManager, login_user
 
 # Define the admin interface.
-admin = Admin(app, name="Administrative Dashboard", template_mode="bootstrap3")
+admin = Admin(app, name="Admin Panel", template_mode="bootstrap3")
 
 # Define user login functionality.
 loginManager = LoginManager()
@@ -22,6 +22,14 @@ class UserModelView(ModelView):
 
 	can_view_details = True
 	column_labels = {"acctType": "Account Type"}
+	column_exclude_list = ("password",)
+
+	def is_accessible(self):
+		"""
+		Restrict view only to admin type accounts (type 0).
+		"""
+
+		return current_user.is_authenticated and current_user.acctType == 0
 
 	def create_model(self, form):
 		"""

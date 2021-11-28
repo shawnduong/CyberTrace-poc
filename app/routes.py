@@ -22,7 +22,7 @@ def application():
 	namespace collision with the Flask "app."
 	"""
 
-	return render_template("vectormap.html")
+	return render_template("app.html")
 
 @app.route("/stub", methods=["GET"])
 @login_required

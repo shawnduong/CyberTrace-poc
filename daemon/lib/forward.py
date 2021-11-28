@@ -11,7 +11,8 @@ from termcolor import colored
 
 def forward(
 	db: ModuleDB, cache: CacheDB, sock: socket.socket, selfIP: str,
-	proto: str, ip: str, port: int, api: str) -> None:
+	proto: str, ip: str, port: int, api: str
+) -> None:
 	"""
 	Receive some data from the socket and forward it to the given API endpoint
 	ip:port/api in the form of JSON data.
@@ -138,3 +139,4 @@ def forward(
 				log(NORMAL, f"|     \"{k}\": %s," % colored(f"{json[k]}", "yellow"))
 
 		log(NORMAL, "| }")
+

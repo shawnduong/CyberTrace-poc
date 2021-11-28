@@ -105,7 +105,7 @@ def main(args: list=["./main.py"]):
 	buffer   = []
 	modules  = []
 
-	# Recursively import all modules files.
+	# Recursively import all module files.
 	for rt, dr, fn in os.walk(os.path.dirname(os.path.abspath(__file__))+"/modules"):
 		for path in filter(lambda f: f.endswith(".py"), fn):
 			spec = importlib.util.spec_from_file_location(

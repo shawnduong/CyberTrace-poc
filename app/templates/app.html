@@ -1,20 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html class="scroll-none">
 
 {% include "head.html" %}
 
-<body onmousemove="map_coord(event)">
+<body>
 
 	<div id="map">
-		<img ondragstart="return false" id="map-graphic" src="{{ url_for('static', filename='svg/CyberTraceMap2.svg') }}"/>
+		<div id="map-geogrid"></div>
+		<div id="map-graphic">
+			<object type="image/svg+xml" data="{{ url_for('static', filename='svg/map0.svg') }}"/>
+		</div>
 	</div>
 
+	<!--
 	<input type="button" id="zoomIn" class="zoom-button" value="Zoom In"/>
 	<input type="button" id="zoomOut" class="zoom-button" value="Zoom Out"/>
 
 	x:<input type="button" id="x"/>
 	y:<input type="button" id="y"/>
+	-->
 
+	<script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script>
 	<script src="{{ url_for('static', filename='js/app.js') }}"></script>
 
 </body>

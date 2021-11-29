@@ -83,22 +83,17 @@ body {
 }
 
 #map {
-	overflow: hidden;
-	align-items: center;
-	margin-left: auto;
-	margin-right: auto;
-	width: 1250px;
-	height: 635px;
+	width: 100vw;
 }
 
-#map-graphic {
-	cursor: default;
-	align-items: center;
-	margin-left: auto;
-	margin-right: auto;
-	position: relative;
+#map-geogrid {
+	position: absolute;
+	z-index: 0;
+}
+
+#map-graphic object {
 	width: 100%;
-	height: 100%;
+	z-index: 1;
 }
 
 #registration-rejected {
@@ -174,8 +169,6 @@ body {
 	width: 100%;
 }
 
-.zoom-button {
-	margin-left: 11px;
-	width: 100px;
-	height: 50px;
+.scroll-none {
+	scrollbar-width: none;
 }

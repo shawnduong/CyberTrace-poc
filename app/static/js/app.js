@@ -13,7 +13,7 @@ let scaleX = 1;
 let scaleY = 1;
 
 /* Zoom value. */
-let zoom = 1;
+let zoom = 0;
 
 /* Dynamically resize the geogrid based on resize detections in the map. */
 let resize = new ResizeObserver(() =>
@@ -42,7 +42,7 @@ $("#map-geogrid").click(function(e)
 /* Increment or decrement map zoom by step values of STEP upon scroll. */
 $("#map").on("wheel", function(e)
 {
-	if (e.originalEvent.deltaY > 0 && zoom > 1)  zoom -= STEP;
+	if (e.originalEvent.deltaY > 0 && zoom > 0)  zoom -= STEP;
 	else                                         zoom += STEP;
 
 	/* Prevent actual page scrolling. */

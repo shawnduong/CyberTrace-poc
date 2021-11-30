@@ -83,17 +83,23 @@ body {
 }
 
 #map {
-	width: 100vw;
+	position: relative;
+	z-index: 2;
 }
 
 #map-geogrid {
 	position: absolute;
+	z-index: 1;
+}
+
+#map-graphic {
+	position: absolute;
+	width: 100%;
 	z-index: 0;
 }
 
 #map-graphic object {
 	width: 100%;
-	z-index: 1;
 }
 
 #registration-rejected {

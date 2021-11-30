@@ -1,6 +1,3 @@
-/* Geogrid offset in the page. */
-const OFFSET = $("#map-geogrid").offset();
-
 /* Zoom step values per scroll event. */
 const STEP = 0.1;
 
@@ -11,6 +8,16 @@ let y = 0;
 /* Effective scaling constants to calculate x and y from real dimensions. */
 let scaleX = 1;
 let scaleY = 1;
+
+/* Pan offset buffers. */
+let tmpPanX = 0;
+let tmpPanY = 0;
+let tmpDragX = 0;
+let tmpDragY = 0;
+
+/* Actual pan offsets. */
+let panX = 0;
+let panY = 0;
 
 /* Zoom value from 0 (inclusive) to positive infinity. */
 let zoom = 0;
@@ -43,8 +50,8 @@ $("#map-graphic").ready(function()
 $("#map-geogrid").click(function(e)
 {
 	/* Scale the grid and anchor the center to (0,0). */
-	x = 0.862 * (scaleX*(e.pageX - OFFSET.left) - 1052/2);
-	y = -1 * 0.862 * 0.953 * (scaleY*(e.pageY - OFFSET.top) - 531/2);
+	x = 0.862 * (scaleX*(e.pageX - panX) - 1052/2);
+	y = -1 * 0.862 * 0.953 * (scaleY*(e.pageY - panY) - 531/2);
 
 	/* Adjust for the map offset. */
 	x += 51.1175898931;
@@ -83,72 +90,43 @@ $("#map").on("wheel", function(e)
    in the same place, however, and only the grid and graphic move. */
 $("#map")
 /* Allow the user to drag the map if the user has zoomed in */
-.on("mousedown", function()
+.on("mousedown", function(e)
 {
+	tmpPanX = e.pageX;
+	tmpPanY = e.pageY;
+
 	dragging = true;
 })
 /* Function is used to stop dragging from happening when the user is no longer
    dragging the map. */
 .on("mouseup", function()
 {
+	panX = tmpDragX;
+	panY = tmpDragY;
 	dragging = false;
 })
 /* Function is used to stop dragging from happening when the user is no longer
    dragging the map. */
 .on("mouseout", function()
 {
+	panX = tmpDragX;
+	panY = tmpDragY;
 	dragging = false;
 })
-/* Keep track of the location where the user moved to. */
+/* Keep track of the location where the user moved to and pan the map on drag. */
 .on("mousemove", function(e)
 {
 	if (!dragging) return false;
 
-	let updateLeft = e.pageX - OFFSET.left - x;
-	let updateTop  = e.pageY - OFFSET.top  - y;
+	tmpDragX = e.pageX - tmpPanX + panX;
+	tmpDragY = e.pageY - tmpPanY + panY;
 
-	console.log(updateLeft, updateTop);
+	$("#map-graphic").css("left", tmpDragX);
+	$("#map-graphic").css("top", tmpDragY);
+
 	console.log("dragging");
 });
 
-///* Zoom function that keeps track of the width and height as the user is zooming
-//   in or zooming out. */
-//function zoom_map(zoomNum)
-//{
-//	img = document.getElementById("map-graphic");
-//	zoomValue += zoomNum;
-//
-//	/* Making sure that user can't zoom out past the set size. */
-//	if (zoomValue < 1.0) 
-//	{
-//		zoomValue = 1.0;
-//		img.style.top = "0px";
-//	}
-//
-//	newWidth = (originalWidth * zoomValue);
-//	newHeight = (originalHeight * zoomValue);
-//
-//	width = (originalWidth - newWidth);
-//	height = (originalHeight - newHeight);
-//
-//	if (left < width) 
-//	{
-//		left = width;
-//	}
-//
-//	if (top < height) 
-//	{
-//		top = height;
-//	}
-//
-//	img.style.left = left + "px";
-//	img.style.top = top + "px";
-//	img.style.width = newWidth + "px";
-//	img.style.height = newHeight + "px";
-//
-//	img = null;
-//}
-//
 ///* Allows user to drag the map if user has zoomed in */
 //function dragging_map() 
 //{

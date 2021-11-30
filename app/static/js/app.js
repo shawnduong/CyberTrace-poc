@@ -12,21 +12,32 @@ let y = 0;
 let scaleX = 1;
 let scaleY = 1;
 
-/* Zoom value. */
+/* Zoom value from 0 (inclusive) to positive infinity. */
 let zoom = 0;
 
-/* Dynamically resize the geogrid based on resize detections in the map. */
+/* Dragging boolean. */
+let dragging = false;
+
+/* Dynamically resize the geogrid based on resize detections in the map graphic.
+   The map object itself should stay of constant dimensionality. */
 let resize = new ResizeObserver(() =>
 {
 	/* Resize the geogrid. */
-	$("#map-geogrid").width($("#map").width());
-	$("#map-geogrid").height($("#map").height());
+	$("#map-geogrid").width($("#map-graphic").width());
+	$("#map-geogrid").height($("#map-graphic").height());
 
 	/* Calculate new scaling constants for the updated geogrid dimensions. */
 	scaleX = 1052/$("#map-geogrid").width();
 	scaleY = 531/$("#map-geogrid").height();
 });
-resize.observe($("#map").get(0));
+resize.observe($("#map-graphic").get(0));
+
+/* Assign the map dimensions after loading the graphic. */
+$("#map-graphic").ready(function()
+{
+	$("#map").width($("#map-graphic").width());
+	$("#map").height($("#map-graphic").height());
+});
 
 /* Update the map coordinates inside the geogrid div upon clicking. */
 $("#map-geogrid").click(function(e)
@@ -47,11 +58,57 @@ $("#map-geogrid").click(function(e)
 /* Increment or decrement map zoom by step values of STEP upon scroll. */
 $("#map").on("wheel", function(e)
 {
-	if (e.originalEvent.deltaY > 0 && zoom > 0)  zoom -= STEP;
-	else                                         zoom += STEP;
+	/* Increment or decrement the zoom variable by STEP. */
+	if (e.originalEvent.deltaY > 0)  zoom -= STEP;
+	else                             zoom += STEP;
+
+	/* Ensure bounds. */
+	if (zoom < 0)
+	{
+		zoom = 0;
+		return false;
+	}
+
+	/* Calculate new widths and heights. */
+	$("#map-geogrid").width($("#map").width() * (1+zoom));
+	$("#map-graphic").width($("#map").width() * (1+zoom));
+	$("#map-geogrid").height($("#map").height() * (1+zoom));
+	$("#map-graphic").height($("#map").height() * (1+zoom));
 
 	/* Prevent actual page scrolling. */
 	return false;
+});
+
+/* Move the map grid and graphic by dragging the mouse. The actual map stays
+   in the same place, however, and only the grid and graphic move. */
+$("#map")
+/* Allow the user to drag the map if the user has zoomed in */
+.on("mousedown", function()
+{
+	dragging = true;
+})
+/* Function is used to stop dragging from happening when the user is no longer
+   dragging the map. */
+.on("mouseup", function()
+{
+	dragging = false;
+})
+/* Function is used to stop dragging from happening when the user is no longer
+   dragging the map. */
+.on("mouseout", function()
+{
+	dragging = false;
+})
+/* Keep track of the location where the user moved to. */
+.on("mousemove", function(e)
+{
+	if (!dragging) return false;
+
+	let updateLeft = e.pageX - OFFSET.left - x;
+	let updateTop  = e.pageY - OFFSET.top  - y;
+
+	console.log(updateLeft, updateTop);
+	console.log("dragging");
 });
 
 ///* Zoom function that keeps track of the width and height as the user is zooming

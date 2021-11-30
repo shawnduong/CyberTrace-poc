@@ -8,7 +8,7 @@ const STEP = 0.1;
 let x = 0;
 let y = 0;
 
-/* Effective scaling constants to calculate x and y at real dimensions. */
+/* Effective scaling constants to calculate x and y from real dimensions. */
 let scaleX = 1;
 let scaleY = 1;
 
@@ -23,16 +23,21 @@ let resize = new ResizeObserver(() =>
 	$("#map-geogrid").height($("#map").height());
 
 	/* Calculate new scaling constants for the updated geogrid dimensions. */
-	scaleX = 256/$("#map-geogrid").width();
-	scaleY = 256/$("#map-geogrid").height();
+	scaleX = 1052/$("#map-geogrid").width();
+	scaleY = 531/$("#map-geogrid").height();
 });
 resize.observe($("#map").get(0));
 
 /* Update the map coordinates inside the geogrid div upon clicking. */
 $("#map-geogrid").click(function(e)
 {
-	x = scaleX * (e.pageX - OFFSET.left);
-	y = scaleY * (e.pageY - OFFSET.top);
+	/* Scale the grid and anchor the center to (0,0). */
+	x = 0.862 * (scaleX*(e.pageX - OFFSET.left) - 1052/2);
+	y = -1 * 0.862 * 0.953 * (scaleY*(e.pageY - OFFSET.top) - 531/2);
+
+	/* Adjust for the map offset. */
+	x += 51.1175898931;
+	y += 34.2487852284;
 
 	/* Debug. */
 	console.log("x =", x);

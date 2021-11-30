@@ -2,22 +2,17 @@
 const STEP = 0.1;
 
 /* Effective x and y values of the cursor's last click. */
-let x = 0;
-let y = 0;
+let coord = {x: 0, y: 0};
 
 /* Effective scaling constants to calculate x and y from real dimensions. */
-let scaleX = 1;
-let scaleY = 1;
+let scale = {x: 1, y: 1};
 
 /* Pan offset buffers. */
-let tmpPanX = 0;
-let tmpPanY = 0;
-let tmpDragX = 0;
-let tmpDragY = 0;
+let tmpPan  = {x: 0, y: 0};
+let tmpDrag = {x: 0, y: 0};
 
 /* Actual pan offsets. */
-let panX = 0;
-let panY = 0;
+let pan = {x: 0, y: 0};
 
 /* Zoom value from 0 (inclusive) to positive infinity. */
 let zoom = 0;
@@ -34,8 +29,8 @@ let resize = new ResizeObserver(() =>
 	$("#map-geogrid").height($("#map-graphic").height());
 
 	/* Calculate new scaling constants for the updated geogrid dimensions. */
-	scaleX = 1052/$("#map-geogrid").width();
-	scaleY = 531/$("#map-geogrid").height();
+	scale.x = 1052/$("#map-geogrid").width();
+	scale.y = 531/$("#map-geogrid").height();
 });
 resize.observe($("#map-graphic").get(0));
 
@@ -50,16 +45,16 @@ $("#map-graphic").ready(function()
 $("#map-geogrid").click(function(e)
 {
 	/* Scale the grid and anchor the center to (0,0). */
-	x = 0.862 * (scaleX*(e.pageX - panX) - 1052/2);
-	y = -1 * 0.862 * 0.953 * (scaleY*(e.pageY - panY) - 531/2);
+	coord.x = 0.862 * (scale.x*(e.pageX - pan.x) - 1052/2);
+	coord.y = -1 * 0.862 * 0.953 * (scale.y*(e.pageY - pan.y) - 531/2);
 
 	/* Adjust for the map offset. */
-	x += 51.1175898931;
-	y += 34.2487852284;
+	coord.x += 51.1175898931;
+	coord.y += 34.2487852284;
 
 	/* Debug. */
-	console.log("x =", x);
-	console.log("y =", y);
+	console.log("x =", coord.x);
+	console.log("y =", coord.y);
 });
 
 /* Increment or decrement map zoom by step values of STEP upon scroll. */
@@ -92,8 +87,8 @@ $("#map")
 /* Allow the user to drag the map if the user has zoomed in */
 .on("mousedown", function(e)
 {
-	tmpPanX = e.pageX;
-	tmpPanY = e.pageY;
+	tmpPan.x = e.pageX;
+	tmpPan.y = e.pageY;
 
 	dragging = true;
 })
@@ -101,16 +96,16 @@ $("#map")
    dragging the map. */
 .on("mouseup", function()
 {
-	panX = tmpDragX;
-	panY = tmpDragY;
+	pan.x = tmpDrag.x;
+	pan.y = tmpDrag.y;
 	dragging = false;
 })
 /* Function is used to stop dragging from happening when the user is no longer
    dragging the map. */
 .on("mouseout", function()
 {
-	panX = tmpDragX;
-	panY = tmpDragY;
+	pan.x = tmpDrag.x;
+	pan.y = tmpDrag.y;
 	dragging = false;
 })
 /* Keep track of the location where the user moved to and pan the map on drag. */
@@ -118,62 +113,11 @@ $("#map")
 {
 	if (!dragging) return false;
 
-	tmpDragX = e.pageX - tmpPanX + panX;
-	tmpDragY = e.pageY - tmpPanY + panY;
+	tmpDrag.x = e.pageX - tmpPan.x + pan.x;
+	tmpDrag.y = e.pageY - tmpPan.y + pan.y;
 
-	$("#map-graphic").css("left", tmpDragX);
-	$("#map-graphic").css("top", tmpDragY);
+	$("#map-graphic").css("left", tmpDrag.x);
+	$("#map-graphic").css("top", tmpDrag.y);
 
 	console.log("dragging");
 });
-
-///* Allows user to drag the map if user has zoomed in */
-//function dragging_map() 
-//{
-//	if (zoomValue > 1.0) 
-//	{
-//		img = this;
-//		x = window.event.clientX - document.getElementById("map-graphic").offsetLeft;
-//		y = window.event.clientY - document.getElementById("map-graphic").offsetTop;
-//	}
-//}
-//
-///* Function is used to stop dragging from happening when user is no longer
-//   dragging the map */
-//function stop_dragging() 
-//{
-//	img = null;
-//}
-//
-//
-///* This function keeps tracks of the location where the user moved to. */
-//function while_dragging() 
-//{
-//	updateLeft = (window.event.clientX - x);
-//	updateTop = (window.event.clientY - y);
-//
-//	/* Prevents the user from dragging the entire map. */
-//	if (updateLeft > 0) 
-//	{
-//		updateLeft = 0;
-//	}
-//
-//	if (updateLeft < (originalWidth - img.width)) 
-//	{
-//		updateLeft = (originalWidth - img.width);
-//	}
-//
-//	/* Prevents the user from dragging the entire map. */
-//	if (updateTop > 0) 
-//	{
-//		updateTop = 0;
-//	}
-//
-//	if (updateTop < (originalHeight - img.height)) 
-//	{
-//		updateTop = (originalHeight - img.height);
-//	}
-//
-//	img.style.left = updateLeft + "px";
-//	img.style.top = updateTop + "px";
-//}

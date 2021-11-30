@@ -176,5 +176,5 @@ body {
 }
 
 .scroll-none {
-	scrollbar-width: none;
+	overflow: hidden;
 }

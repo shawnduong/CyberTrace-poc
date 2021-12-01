@@ -26,7 +26,7 @@ function degrees(radians)
 
 /* Given (lat,lon) geographic coordinates, output (x,y) Cartesian coordinates.
    Zoom starts at 0 (no zoom) and may increase positively. */
-function to_cartesian(lat, lon, zoom)
+function to_cartesian(lat, lon)
 {
 	/* Return -1 if the lat is out of bounds. */
 	if (lat < -90 || lat >= 90)
@@ -38,12 +38,6 @@ function to_cartesian(lat, lon, zoom)
 	if (lon < -180 || lon > 180)
 	{
 		return [-2, -2];
-	}
-
-	/* Return -3 if the zoom is invalid. */
-	if (zoom < 0)
-	{
-		return [-3, -3];
 	}
 
 	lat = radians(lat);

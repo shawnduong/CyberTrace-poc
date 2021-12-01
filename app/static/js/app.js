@@ -94,18 +94,11 @@ $("#map")
 })
 /* Function is used to stop dragging from happening when the user is no longer
    dragging the map. */
-.on("mouseup", function()
+.on("mouseup mouseout", function()
 {
 	pan.x = tmpDrag.x;
 	pan.y = tmpDrag.y;
-	dragging = false;
-})
-/* Function is used to stop dragging from happening when the user is no longer
-   dragging the map. */
-.on("mouseout", function()
-{
-	pan.x = tmpDrag.x;
-	pan.y = tmpDrag.y;
+
 	dragging = false;
 })
 /* Keep track of the location where the user moved to and pan the map on drag. */
@@ -116,8 +109,26 @@ $("#map")
 	tmpDrag.x = e.pageX - tmpPan.x + pan.x;
 	tmpDrag.y = e.pageY - tmpPan.y + pan.y;
 
+	/* Ensure bounds. */
+	if (tmpDrag.x >= 0)
+	{
+		tmpDrag.x = 0;
+	}
+	else if (tmpDrag.x < $("#map").width() - $("#map-graphic").width())
+	{
+		tmpDrag.x = $("#map").width() - $("#map-graphic").width();
+	}
+
+	/* Ensure bounds. */
+	if (tmpDrag.y >= 0)
+	{
+		tmpDrag.y = 0;
+	}
+	else if (tmpDrag.y < $("#map").height() - $("#map-graphic").height())
+	{
+		tmpDrag.y = $("#map").height() - $("#map-graphic").height();
+	}
+
 	$("#map-graphic").css("left", tmpDrag.x);
 	$("#map-graphic").css("top", tmpDrag.y);
-
-	console.log("dragging");
 });

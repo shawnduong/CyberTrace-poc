@@ -34,8 +34,8 @@ let resize = new ResizeObserver(() =>
 });
 resize.observe($("#map-graphic").get(0));
 
-/* Assign the map dimensions after loading the graphic. */
-$("#map-graphic").ready(function()
+/* Assign the map dimensions after loading the window. */
+$(window).on("load", function()
 {
 	$("#map").width($("#map-graphic").width());
 	$("#map").height($("#map-graphic").height());

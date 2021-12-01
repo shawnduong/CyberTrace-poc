@@ -27,7 +27,7 @@ class CacheDB:
 		set of latitude, longitude coordinates.
 		"""
 
-		__tablename__ = 'ip'
+		__tablename__ = "ip"
 
 		ip         = db.Column(db.String, primary_key=True)
 		latitude   = db.Column(db.Float, nullable=False)

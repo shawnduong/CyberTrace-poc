@@ -28,7 +28,7 @@ class ModuleDB:
 		description.
 		"""
 
-		__tablename__ = 'module'
+		__tablename__ = "module"
 
 		id           = db.Column(db.Integer, primary_key=True)
 		name         = db.Column(db.String(256), nullable=False)
@@ -48,7 +48,7 @@ class ModuleDB:
 		descriptions.
 		"""
 
-		__tablename__ = 'attack'
+		__tablename__ = "attack"
 
 		id           = db.Column(db.Integer, primary_key=True)
 		moduleID     = db.Column(db.Integer, db.ForeignKey("module.id"), nullable=False)

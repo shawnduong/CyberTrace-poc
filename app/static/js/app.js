@@ -1,123 +1,134 @@
-var img;
-var width;
-var height;
-var newWidth;
-var newHeight;
-var updateLeft;
-var updateTop;
-var x = 0;
-var y = 0;
-var top = 0;
-var left = 0;
-var zoomValue = 1.0;
-var originalWidth = document.getElementById("map-graphic").getBoundingClientRect().width;
-var originalHeight = document.getElementById("map-graphic").getBoundingClientRect().height;
+/* Zoom step values per scroll event. */
+const STEP = 0.1;
 
-/* Zoom function that keeps track of the width and height as the user is zooming
-   in or zooming out. */
-function zoom_map(zoomNum)
+/* Effective x and y values of the cursor's last click. */
+let coord = {x: 0, y: 0};
+
+/* Effective scaling constants to calculate x and y from real dimensions. */
+let scale = {x: 1, y: 1};
+
+/* Pan offset buffers. */
+let tmpPan  = {x: 0, y: 0};
+let tmpDrag = {x: 0, y: 0};
+
+/* Actual pan offsets. */
+let pan = {x: 0, y: 0};
+
+/* Zoom value from 0 (inclusive) to positive infinity. */
+let zoom = 0;
+
+/* Dragging boolean. */
+let dragging = false;
+
+/* Dynamically resize the geogrid based on resize detections in the map graphic.
+   The map object itself should stay of constant dimensionality. */
+let resize = new ResizeObserver(() =>
 {
-	img = document.getElementById("map-graphic");
-	zoomValue += zoomNum;
+	/* Resize the geogrid. */
+	$("#map-geogrid").width($("#map-graphic").width());
+	$("#map-geogrid").height($("#map-graphic").height());
 
-	/* Making sure that user can't zoom out past the set size. */
-	if (zoomValue < 1.0) 
-	{
-		zoomValue = 1.0;
-		img.style.top = "0px";
-	}
+	/* Calculate new scaling constants for the updated geogrid dimensions. */
+	scale.x = 1052/$("#map-geogrid").width();
+	scale.y = 531/$("#map-geogrid").height();
+});
+resize.observe($("#map-graphic").get(0));
 
-	newWidth = (originalWidth * zoomValue);
-	newHeight = (originalHeight * zoomValue);
-
-	width = (originalWidth - newWidth);
-	height = (originalHeight - newHeight);
-
-	if (left < width) 
-	{
-		left = width;
-	}
-
-	if (top < height) 
-	{
-		top = height;
-	}
-
-	img.style.left = left + "px";
-	img.style.top = top + "px";
-	img.style.width = newWidth + "px";
-	img.style.height = newHeight + "px";
-
-	img = null;
-}
-
-/* Allows user to drag the map if user has zoomed in */
-function dragging_map() 
+/* Assign the map dimensions after loading the window. */
+$(window).on("load", function()
 {
-	if (zoomValue > 1.0) 
-	{
-		img = this;
-		x = window.event.clientX - document.getElementById("map-graphic").offsetLeft;
-		y = window.event.clientY - document.getElementById("map-graphic").offsetTop;
-	}
-}
+	$("#map").width($("#map-graphic").width());
+	$("#map").height($("#map-graphic").height());
+});
 
-/* Function is used to stop dragging from happening when user is no longer
-   dragging the map */
-function stop_dragging() 
+/* Update the map coordinates inside the geogrid div upon clicking. */
+$("#map-geogrid").click(function(e)
 {
-	img = null;
-}
+	/* Scale the grid and anchor the center to (0,0). */
+	coord.x = 0.862 * (scale.x*(e.pageX - pan.x) - 1052/2);
+	coord.y = -1 * 0.862 * 0.953 * (scale.y*(e.pageY - pan.y) - 531/2);
 
+	/* Adjust for the map offset. */
+	coord.x += 51.1175898931;
+	coord.y += 34.2487852284;
 
-/* This function keeps tracks of the location where the user moved to. */
-function while_dragging() 
+	/* Debug. */
+	console.log("x =", coord.x);
+	console.log("y =", coord.y);
+});
+
+/* Increment or decrement map zoom by step values of STEP upon scroll. */
+$("#map").on("wheel", function(e)
 {
-	updateLeft = (window.event.clientX - x);
-	updateTop = (window.event.clientY - y);
+	/* Increment or decrement the zoom variable by STEP. */
+	if (e.originalEvent.deltaY > 0)  zoom -= STEP;
+	else                             zoom += STEP;
 
-	/* Prevents the user from dragging the entire map. */
-	if (updateLeft > 0) 
+	/* Ensure bounds. */
+	if (zoom < 0)
 	{
-		updateLeft = 0;
+		zoom = 0;
+		return false;
 	}
 
-	if (updateLeft < (originalWidth - img.width)) 
-	{
-		updateLeft = (originalWidth - img.width);
-	}
+	/* Calculate new widths and heights. */
+	$("#map-geogrid").width($("#map").width() * (1+zoom));
+	$("#map-graphic").width($("#map").width() * (1+zoom));
+	$("#map-geogrid").height($("#map").height() * (1+zoom));
+	$("#map-graphic").height($("#map").height() * (1+zoom));
 
-	/* Prevents the user from dragging the entire map. */
-	if (updateTop > 0) 
-	{
-		updateTop = 0;
-	}
+	/* Prevent actual page scrolling. */
+	return false;
+});
 
-	if (updateTop < (originalHeight - img.height)) 
-	{
-		updateTop = (originalHeight - img.height);
-	}
-
-	img.style.left = updateLeft + "px";
-	img.style.top = updateTop + "px";
-}
-
-/* Uses zoom_map function to zoom in and out. */
-document.getElementById("zoomIn").addEventListener("click",function() { zoom_map(0.20) });
-document.getElementById("zoomOut").addEventListener("click", function() { zoom_map(-0.20) });
-
-document.getElementById("map").addEventListener("mouseup", stop_dragging);
-document.getElementById("map-graphic").addEventListener("mousedown", dragging_map);
-document.getElementById("map").addEventListener("mouseout", stop_dragging);
-document.getElementById("map").addEventListener("mousemove", while_dragging);
-
-
-function map_coord(event) 
+/* Move the map grid and graphic by dragging the mouse. The actual map stays
+   in the same place, however, and only the grid and graphic move. */
+$("#map")
+/* Allow the user to drag the map if the user has zoomed in */
+.on("mousedown", function(e)
 {
-	/* Uses clientX and clientY to get the horizontal and vertical coordinates */
-	var x = event.clientX;
-	var y = event.clientY;
+	tmpPan.x = e.pageX;
+	tmpPan.y = e.pageY;
 
-	document.getElementById("x").value = x;
-	document.getElementById("y").value = y;
-}
+	dragging = true;
+})
+/* Function is used to stop dragging from happening when the user is no longer
+   dragging the map. */
+.on("mouseup mouseout", function()
+{
+	pan.x = tmpDrag.x;
+	pan.y = tmpDrag.y;
+
+	dragging = false;
+})
+/* Keep track of the location where the user moved to and pan the map on drag. */
+.on("mousemove", function(e)
+{
+	if (!dragging) return false;
+
+	tmpDrag.x = e.pageX - tmpPan.x + pan.x;
+	tmpDrag.y = e.pageY - tmpPan.y + pan.y;
+
+	/* Ensure bounds. */
+	if (tmpDrag.x >= 0)
+	{
+		tmpDrag.x = 0;
+	}
+	else if (tmpDrag.x < $("#map").width() - $("#map-graphic").width())
+	{
+		tmpDrag.x = $("#map").width() - $("#map-graphic").width();
+	}
+
+	/* Ensure bounds. */
+	if (tmpDrag.y >= 0)
+	{
+		tmpDrag.y = 0;
+	}
+	else if (tmpDrag.y < $("#map").height() - $("#map-graphic").height())
+	{
+		tmpDrag.y = $("#map").height() - $("#map-graphic").height();
+	}
+
+	$("#map-graphic").css("left", tmpDrag.x);
+	$("#map-graphic").css("top", tmpDrag.y);
+});

@@ -71,7 +71,48 @@ $("#map").on("wheel", function(e)
 		return false;
 	}
 
-	/* Calculate new widths and heights. */
+	/* Offset calculation function. Note that this is INCOMPLETE and should be replaced with a more
+	   accurate function in the future. There is still an undesirable non-center weighted zoom bias. */
+	let fun = function(D_o, D_n, D_m, O_n)
+	{
+		return -1*D_m*( (-O_n/D_n) + ((D_o/D_n - D_o/D_m)*( (-O_n/D_n) / ( (-O_n/D_n) + ((D_n-D_o+O_n)/D_n) ))));
+	};
+
+	/* Calculate and assign new pans to center-weight zooming width-wise. */
+	let D_o = $("#map").width();
+	let D_n = $("#map-graphic").width();
+	let D_m = $("#map").width()*(1+zoom);
+	let O_n = pan.x;
+
+	if ((-O_n/D_n) + ((D_n-D_o+O_n)/D_n) != 0)
+	{
+		pan.x = fun(D_o, D_n, D_m, O_n);
+	}
+	else
+	{
+		pan.x = (D_n - D_m) / 2;
+	}
+
+	$("#map-graphic").css("left", pan.x);
+
+	/* Calculate and assign new pans to center-weight zooming height-wise. */
+	D_o = $("#map").height();
+	D_n = $("#map-graphic").height();
+	D_m = $("#map").height()*(1+zoom);
+	O_n = pan.y;
+
+	if ((-O_n/D_n) + ((D_n-D_o+O_n)/D_n) != 0)
+	{
+		pan.y = fun(D_o, D_n, D_m, O_n);
+	}
+	else
+	{
+		pan.y = (D_n - D_m) / 2;
+	}
+
+	$("#map-graphic").css("top", pan.y);
+
+	/* Calculate and assign new widths and heights. */
 	$("#map-geogrid").width($("#map").width() * (1+zoom));
 	$("#map-graphic").width($("#map").width() * (1+zoom));
 	$("#map-geogrid").height($("#map").height() * (1+zoom));

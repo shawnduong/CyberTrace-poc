@@ -1,4 +1,4 @@
-/* Acknowledgment: Canters and Decleir, for their fifth order polynomial
+/* Acknowledgment: Canters and Decleir, for their 4th and 5th order polynomial
  * equations approximating Robinson map projections.
  *
  * Assumptions:
@@ -8,8 +8,8 @@
  * 3. (lat,lon) are in degrees.
  */
 
-/* Canters and Decleir's coefficients for their 5th degree polynomial, needed
-   to approximate Robinson coordinates. */
+/* Canters and Decleir's coefficients for their 4th and 5th degree polynomials,
+   needed to approximate Robinson coordinates. */
 const A = [0.8507, 0.9642, -0.1450, -0.0013, -0.0104, -0.0129];
 
 /* Convert degrees to radians. */

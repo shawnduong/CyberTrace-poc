@@ -20,6 +20,9 @@ from routes import *
 # Load the authentication functionality.
 from authentication import *
 
+# Load the API endpoints.
+from api import *
+
 if __name__ == "__main__":
 	print("ERROR: This file should not be run directly. Did you mean to call"
 		+ "the main entry point program instead?", file=sys.stderr)

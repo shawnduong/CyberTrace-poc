@@ -148,6 +148,8 @@ $("#map")
    dragging the map. */
 .on("mouseup mouseout", function()
 {
+	if (!dragging) return false;
+
 	pan.x = tmpDrag.x;
 	pan.y = tmpDrag.y;
 
@@ -220,10 +222,6 @@ function draw_vector(id, latA, lonA, latB, lonB, color, lifetime, r)
 		b[0] - (b[0]-a[0])/2,
 		(b[1]-a[1])/(b[0]-a[0]) * (b[0] - (b[0]-a[0])/2) * 1.5
 	];
-
-	console.log(a);
-	console.log(b);
-	console.log(c);
 
 	/* Define the path as a quadratic Bezier curve, forming an arc. */
 	path.setAttribute("d", `M ${a[0]} ${a[1]} Q ${c[0]} ${c[1]} ${b[0]} ${b[1]}`);

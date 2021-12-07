@@ -6,13 +6,16 @@
 <body>
 
 	<div id="map">
-		<div id="map-geogrid"></div>
+		<div id="map-geogrid">
+			<svg id="map-renders"></svg>
+		</div>
 		<div id="map-graphic">
 			<object type="image/svg+xml" data="{{ url_for('static', filename='svg/map0.svg') }}"></object>
 		</div>
 	</div>
 
 	<script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='js/jquery.drawsvg.min.js') }}"></script>
 	<script src="{{ url_for('static', filename='js/robinson.js') }}"></script>
 	<script src="{{ url_for('static', filename='js/app.js') }}"></script>
 

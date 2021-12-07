@@ -94,6 +94,7 @@ $("#map").on("wheel", function(e)
 	}
 
 	$("#map-graphic").css("left", pan.x);
+	$("#map-renders").css("left", pan.x);
 
 	/* Calculate and assign new pans to center-weight zooming height-wise. */
 	D_o = $("#map").height();
@@ -111,11 +112,10 @@ $("#map").on("wheel", function(e)
 	}
 
 	$("#map-graphic").css("top", pan.y);
+	$("#map-renders").css("top", pan.y);
 
 	/* Calculate and assign new widths and heights. */
-	$("#map-geogrid").width($("#map").width() * (1+zoom));
 	$("#map-graphic").width($("#map").width() * (1+zoom));
-	$("#map-geogrid").height($("#map").height() * (1+zoom));
 	$("#map-graphic").height($("#map").height() * (1+zoom));
 
 	/* Prevent actual page scrolling. */
@@ -172,4 +172,6 @@ $("#map")
 
 	$("#map-graphic").css("left", tmpDrag.x);
 	$("#map-graphic").css("top", tmpDrag.y);
+	$("#map-renders").css("left", tmpDrag.x);
+	$("#map-renders").css("top", tmpDrag.y);
 });

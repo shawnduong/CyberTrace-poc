@@ -102,6 +102,12 @@ body {
 	width: 100%;
 }
 
+#map-renders {
+	position: relative;
+	height: 100%;
+	width: 100%;
+}
+
 #registration-rejected {
 	color: var(--attention);
 	display: inline-block;

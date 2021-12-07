@@ -1,6 +1,13 @@
 /* Zoom step values per scroll event. */
 const STEP = 0.1;
 
+/* Map offset. */
+const OFFSET = {x: 51.1175898931, y: 34.2487852284};
+
+/* Specific scaling factors to turn a CyberTrace Robinson map into a standard
+   Robinson map to simplify calculations. */
+const RSCALE = {s: 0.862, x: 1.000, y: 0.953};
+
 /* Effective x and y values of the cursor's last click. */
 let coord = {x: 0, y: 0};
 
@@ -34,23 +41,27 @@ let resize = new ResizeObserver(() =>
 });
 resize.observe($("#map-graphic").get(0));
 
-/* Assign the map dimensions after loading the window. */
+/* Assign the map dimensions and render viewBox after loading the window. */
 $(window).on("load", function()
 {
-	$("#map").width($("#map-graphic").width());
-	$("#map").height($("#map-graphic").height());
+	let w = $("#map-graphic").width();
+	let h = $("#map-graphic").height();
+
+	$("#map").width(w);
+	$("#map").height(h);
+	$("#map-renders").attr("viewBox", `0 0 ${w} ${h}`);
 });
 
 /* Update the map coordinates inside the geogrid div upon clicking. */
 $("#map-geogrid").click(function(e)
 {
 	/* Scale the grid and anchor the center to (0,0). */
-	coord.x = 0.862 * (scale.x*(e.pageX - pan.x) - 1052/2);
-	coord.y = -1 * 0.862 * 0.953 * (scale.y*(e.pageY - pan.y) - 531/2);
+	coord.x = RSCALE.s * RSCALE.x * (scale.x*(e.pageX - pan.x) - 1052/2);
+	coord.y = -RSCALE.s * RSCALE.y * (scale.y*(e.pageY - pan.y) - 531/2);
 
 	/* Adjust for the map offset. */
-	coord.x += 51.1175898931;
-	coord.y += 34.2487852284;
+	coord.x += OFFSET.x;
+	coord.y += OFFSET.y;
 
 	/* Debug. */
 	console.log("x =", coord.x);
@@ -175,3 +186,52 @@ $("#map")
 	$("#map-renders").css("left", tmpDrag.x);
 	$("#map-renders").css("top", tmpDrag.y);
 });
+
+/* Translate effective Cartesian coordinates to real coordinates. This
+   essentially turns a "grid coordinate" to a "screen coordinate." */
+function to_real(coord)
+{
+	let ex = coord[0];
+	let ey = coord[1];
+
+	return [ ((ex-OFFSET.x)/(RSCALE.s*RSCALE.x) + 1052/2)/scale.x + pan.x,
+		-((ey-OFFSET.y)/(RSCALE.s*RSCALE.y) - 531/2)/scale.y + pan.y ];
+}
+
+/* Draw a vector of id with some color from A to B with a lifetime of TTL
+ * seconds, making a splash of radius r at B. Note that this "vector" has no
+ * "arrowhead," instead replaced by a splash.
+ */
+function draw_vector(id, latA, lonA, latB, lonB, color, lifetime, r)
+{
+	/* Create a new path and define its ID and color. */
+	let path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+	path.setAttribute("id", id);
+	path.setAttribute("stroke", color);
+	path.setAttribute("fill", "transparent");
+
+	/* Translate A and B to coordinates on the screen. */
+	let a = to_real(to_cartesian(latA, lonA));
+	let b = to_real(to_cartesian(latB, lonB));
+
+	/* An artistic formulation of the curve's control point. */
+	let m = (b[1]-a[1])/b[0]
+	let c = [
+		b[0] - (b[0]-a[0])/2,
+		(b[1]-a[1])/(b[0]-a[0]) * (b[0] - (b[0]-a[0])/2) * 1.5
+	];
+
+	console.log(a);
+	console.log(b);
+	console.log(c);
+
+	/* Define the path as a quadratic Bezier curve, forming an arc. */
+	path.setAttribute("d", `M ${a[0]} ${a[1]} Q ${c[0]} ${c[1]} ${b[0]} ${b[1]}`);
+
+	/* Append the newly created path to the map-renders SVG. */
+	$("#map-renders").append(path);
+
+	/* Animate the vector. */
+	let anim = $(path).drawsvg();
+	anim.drawsvg("animate");
+}

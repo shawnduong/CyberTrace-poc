@@ -207,9 +207,9 @@ function to_translated(e)
 
 /* Draw a vector of id with some color from A to B with a lifetime of TTL
  * seconds, making a splash of radius r at B. Note that this "vector" has no
- * "arrowhead," instead replaced by a splash.
+ * "arrowhead," instead replaced by a splash. Also, type an adjacent message.
  */
-async function draw_vector(id, latA, lonA, latB, lonB, color, ttl, r)
+async function draw_vector(id, latA, lonA, latB, lonB, color, ttl, r, msg)
 {
 	/* Create a new path and define its ID and color. */
 	let path = document.createElementNS("http://www.w3.org/2000/svg", "path");
@@ -234,6 +234,17 @@ async function draw_vector(id, latA, lonA, latB, lonB, color, ttl, r)
 	/* Append the newly created path to the map-renders SVG. */
 	$("#map-renders").append(path);
 
+	/* Create the message. */
+	let message = document.createElement("p");
+	message.setAttribute("id", id+"-msg");
+	$("#map-text").append(message);
+	$(message).css("color", color);
+	$(message).css("left", a[0]);
+	$(message).css("top", a[1]);
+
+	/* Type the message. */
+	typewriter($(message), msg, 25);
+
 	/* Animate the vector. */
 	let anim = $(path).drawsvg();
 	anim.drawsvg("animate");
@@ -256,12 +267,14 @@ async function draw_vector(id, latA, lonA, latB, lonB, color, ttl, r)
 	/* Fade out the splash. */
 	$(splash).animate({opacity: 0}, 2500);
 
-	/* Fade out the vector. */
+	/* Fade out the vector and text. */
 	await sleep(ttl*1000);
 	$(path).animate({opacity: 0}, 1000);
+	$(message).animate({opacity: 0}, 1000);
 
-	/* Delete the vector and splash. */
+	/* Delete the vector, splash, and text. */
 	await sleep(1000);
 	$(path).remove();
 	$(splash).remove();
+	$(message).remove();
 }

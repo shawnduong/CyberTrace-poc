@@ -108,6 +108,12 @@ body {
 	width: 100%;
 }
 
+#map-text p {
+	font-family: Source;
+	font-size: 4px;
+	position: relative;
+}
+
 #registration-rejected {
 	color: var(--attention);
 	display: inline-block;

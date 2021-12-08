@@ -62,10 +62,6 @@ $("#map-geogrid").click(function(e)
 	/* Adjust for the map offset. */
 	coord.x += OFFSET.x;
 	coord.y += OFFSET.y;
-
-	/* Debug. */
-	console.log("x =", coord.x);
-	console.log("y =", coord.y);
 });
 
 /* Increment or decrement map zoom by step values of STEP upon scroll. */
@@ -263,4 +259,9 @@ async function draw_vector(id, latA, lonA, latB, lonB, color, ttl, r)
 	/* Fade out the vector. */
 	await sleep(ttl*1000);
 	$(path).animate({opacity: 0}, 1000);
+
+	/* Delete the vector and splash. */
+	await sleep(1000);
+	$(path).remove();
+	$(splash).remove();
 }

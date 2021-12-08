@@ -189,6 +189,12 @@ $("#map")
 	$("#map-renders").css("top", tmpDrag.y);
 });
 
+/* Sleep for ms many milliseconds. */
+function sleep(ms)
+{
+	return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 /* Translate an effective Cartesian coordinate e into an unscaled Cartesian
  * coordinate within a constant-dimension SVG viewBox of equal dimensions to
  * the map's. This effectively allows one to translate effective coordinates
@@ -207,7 +213,7 @@ function to_translated(e)
  * seconds, making a splash of radius r at B. Note that this "vector" has no
  * "arrowhead," instead replaced by a splash.
  */
-function draw_vector(id, latA, lonA, latB, lonB, color, lifetime, r)
+async function draw_vector(id, latA, lonA, latB, lonB, color, ttl, r)
 {
 	/* Create a new path and define its ID and color. */
 	let path = document.createElementNS("http://www.w3.org/2000/svg", "path");
@@ -235,4 +241,26 @@ function draw_vector(id, latA, lonA, latB, lonB, color, lifetime, r)
 	/* Animate the vector. */
 	let anim = $(path).drawsvg();
 	anim.drawsvg("animate");
+
+	/* Wait until the vector is done animating. */
+	await sleep(1000);
+
+	/* Create the splash. */
+	let splash = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+	splash.setAttribute("id", id+"-splash");
+	splash.setAttribute("cx", b[0]);
+	splash.setAttribute("cy", b[1]);
+	splash.setAttribute("r", r);
+	splash.setAttribute("stroke", color);
+	splash.setAttribute("fill", color);
+
+	/* Append the newly created splash to the map-renders SVG. */
+	$("#map-renders").append(splash);
+
+	/* Fade out the splash. */
+	$(splash).animate({opacity: 0}, 2500);
+
+	/* Fade out the vector. */
+	await sleep(ttl*1000);
+	$(path).animate({opacity: 0}, 1000);
 }

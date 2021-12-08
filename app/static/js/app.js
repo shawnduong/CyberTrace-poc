@@ -189,15 +189,18 @@ $("#map")
 	$("#map-renders").css("top", tmpDrag.y);
 });
 
-/* Translate effective Cartesian coordinates to real coordinates. This
-   essentially turns a "grid coordinate" to a "screen coordinate." */
-function to_real(coord)
+/* Translate an effective Cartesian coordinate e into an unscaled Cartesian
+ * coordinate within a constant-dimension SVG viewBox of equal dimensions to
+ * the map's. This effectively allows one to translate effective coordinates
+ * into coordinates compatible with the application SVG.
+ */
+function to_translated(e)
 {
-	let ex = coord[0];
-	let ey = coord[1];
+	let ex = e[0];
+	let ey = e[1];
 
-	return [ ((ex-OFFSET.x)/(RSCALE.s*RSCALE.x) + 1052/2)/scale.x + pan.x,
-		-((ey-OFFSET.y)/(RSCALE.s*RSCALE.y) - 531/2)/scale.y + pan.y ];
+	return [ ((ex-OFFSET.x)/(RSCALE.s*RSCALE.x) + 1052/2)/(1052/$("#map").width()),
+		-((ey-OFFSET.y)/(RSCALE.s*RSCALE.y) - 531/2)/(531/$("#map").height()) ];
 }
 
 /* Draw a vector of id with some color from A to B with a lifetime of TTL
@@ -213,8 +216,8 @@ function draw_vector(id, latA, lonA, latB, lonB, color, lifetime, r)
 	path.setAttribute("fill", "transparent");
 
 	/* Translate A and B to coordinates on the screen. */
-	let a = to_real(to_cartesian(latA, lonA));
-	let b = to_real(to_cartesian(latB, lonB));
+	let a = to_translated(to_cartesian(latA, lonA));
+	let b = to_translated(to_cartesian(latB, lonB));
 
 	/* An artistic formulation of the curve's control point. */
 	let m = (b[1]-a[1])/b[0]

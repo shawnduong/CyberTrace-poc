@@ -57,3 +57,47 @@ class User(UserMixin, db.Model):
 
 		return False
 
+class Event(db.Model):
+	"""
+	A definition for a single event consisting of various types of information
+	sent by the daemon via the middleware.
+	"""
+
+	id                   = db.Column(db.Integer, primary_key=True)
+	epoch_timestamp      = db.Column(db.Integer)
+	module_id            = db.Column(db.Integer)
+	module_name          = db.Column(db.String(256))
+	module_description   = db.Column(db.String(256))
+	attack_type          = db.Column(db.Integer)
+	attack_description   = db.Column(db.String(256))
+	victim_ip_version    = db.Column(db.Integer)
+	victim_ip_address    = db.Column(db.String(64))
+	victim_lat           = db.Column(db.Float)
+	victim_lon           = db.Column(db.Float)
+	attacker_ip_version  = db.Column(db.Integer)
+	attacker_ip_address  = db.Column(db.String(64))
+	attacker_lat         = db.Column(db.Float)
+	attacker_lon         = db.Column(db.Float)
+
+	def __init__(self, epoch_timestamp=-1, module_id=-1, module_name="",
+		module_description="", attack_type=-1, attack_description="",
+		victim_ip_version=-1, victim_ip_address="", victim_lat=-999.0,
+		victim_lon=-999.0, attacker_ip_version=-1, attacker_ip_address="",
+		attacker_lat=-999.0, attacker_lon=-999.0
+	):
+
+		self.epoch_timestamp      = epoch_timestamp
+		self.module_id            = module_id
+		self.module_name          = module_name
+		self.module_description   = module_description
+		self.attack_type          = attack_type
+		self.attack_description   = attack_description
+		self.victim_ip_version    = victim_ip_version
+		self.victim_ip_address    = victim_ip_address
+		self.victim_lat           = victim_lat
+		self.victim_lon           = victim_lon
+		self.attacker_ip_version  = attacker_ip_version
+		self.attacker_ip_address  = attacker_ip_address
+		self.attacker_lat         = attacker_lat
+		self.attacker_lon         = attacker_lon
+

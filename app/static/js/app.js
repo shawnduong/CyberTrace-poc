@@ -8,6 +8,13 @@ const OFFSET = {x: 51.1175898931, y: 34.2487852284};
    Robinson map to simplify calculations. */
 const RSCALE = {s: 0.862, x: 1.000, y: 0.953};
 
+/* Polling interval for updates. */
+const INTERVAL = 1000;
+
+/* Counter for the last event serial number received. -1 will assign this to
+   the most recent event serial number in the API's database upon start. */
+let since = -1;
+
 /* Effective x and y values of the cursor's last click. */
 let coord = {x: 0, y: 0};
 
@@ -40,6 +47,12 @@ let resize = new ResizeObserver(() =>
 	scale.y = 531/$("#map-geogrid").height();
 });
 resize.observe($("#map-graphic").get(0));
+
+/* Begin periodic AJAX updates after the document is ready. */
+$(document).ready(function()
+{
+	setTimeout(update, INTERVAL);
+});
 
 /* Assign the map dimensions and render viewBox after loading the window. */
 $(window).on("load", function()
@@ -191,6 +204,47 @@ function sleep(ms)
 	return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+/* Update the application using AJAX by sending a query. */
+function update()
+{
+	$.ajax(
+	{
+		url: "/api/update/"+since,
+		type: "GET",
+		dataType: "json",
+		success: function(response)
+		{
+			/* -1 implies app just initialized and therefore needs to first
+			   define the head before continuing. */
+			if (since == -1)
+			{
+				since = response.HEAD;
+				return;
+			}
+
+			/* Response length 0 implies delta of 0, thus nothing to do. */
+			if (Object.keys(response).length == 0)  return;
+
+			/* Handle each individual update. */
+			$.each(response, function(id, v)
+			{
+				if (id > since)  since = id;
+
+				draw_vector(id, v.attacker_lat, v.attacker_lon, v.victim_lat,
+					v.victim_lon, "#FFFFFF", 5, 3,
+					`[${v.module_name}] ${v.attack_description}`);
+
+				/* TODO: Once Jet finishes the node render function, then that
+				   function will also be called here. */
+			});
+		},
+		complete: function()
+		{
+			setTimeout(update, INTERVAL);
+		}
+	});
+}
+
 /* Translate an effective Cartesian coordinate e into an unscaled Cartesian
  * coordinate within a constant-dimension SVG viewBox of equal dimensions to
  * the map's. This effectively allows one to translate effective coordinates
@@ -224,7 +278,7 @@ async function draw_vector(id, latA, lonA, latB, lonB, color, ttl, r, msg)
 	/* An artistic formulation of the curve's control point. */
 	let c = [
 		b[0] - (b[0]-a[0])/2,
-		(b[1]-a[1])/(b[0]-a[0]) * (b[0] - (b[0]-a[0])/2) * 1.5
+		b[1] - a[1] - Math.sqrt(Math.pow(b[1]-a[1], 2) + Math.pow(b[0]-a[0], 2))*0.33
 	];
 
 	/* Define the path as a quadratic Bezier curve, forming an arc. */

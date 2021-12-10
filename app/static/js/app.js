@@ -331,3 +331,34 @@ async function draw_vector(id, latA, lonA, latB, lonB, color, ttl, r, msg)
 	$(splash).remove();
 	$(message).remove();
 }
+
+/* Draw a node of id with some color at (lat,lon) and radius r with an attached
+   message printed near it. */
+function draw_node(id, lat, lon, color, r, msg)
+{
+	/* Translate (lat,lon) to coordinates on the screen. */
+	let point = to_translated(to_cartesian(lat, lon));
+
+	/* Create a new node and define its ID and color. */
+	let node = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+	node.setAttribute("id", id+"-node");
+	node.setAttribute("cx", point[0]);
+	node.setAttribute("cy", point[1]);
+	node.setAttribute("r", r);
+	node.setAttribute("stroke", color);
+	node.setAttribute("fill", color);
+
+	/* Append the newly created node to the map-renders SVG. */
+	$("#map-renders").append(node);
+
+	/* Create the message. */
+	let message = document.createElement("p");
+	message.setAttribute("id", id+"-node-msg");
+	$("#map-text").append(message);
+	$(message).css("color", color);
+	$(message).css("left", point[0]);
+	$(message).css("top", point[1]);
+
+	/* Type the message. */
+	typewriter($(message), msg, 25);
+}

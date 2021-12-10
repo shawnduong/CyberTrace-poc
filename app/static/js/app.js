@@ -222,7 +222,6 @@ async function draw_vector(id, latA, lonA, latB, lonB, color, ttl, r, msg)
 	let b = to_translated(to_cartesian(latB, lonB));
 
 	/* An artistic formulation of the curve's control point. */
-	let m = (b[1]-a[1])/b[0]
 	let c = [
 		b[0] - (b[0]-a[0])/2,
 		(b[1]-a[1])/(b[0]-a[0]) * (b[0] - (b[0]-a[0])/2) * 1.5

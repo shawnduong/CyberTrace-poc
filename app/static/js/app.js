@@ -362,3 +362,54 @@ function draw_node(id, lat, lon, color, r, msg)
 	/* Type the message. */
 	typewriter($(message), msg, 25);
 }
+
+/* Draw a line of id with some color from A to B with a lifetime of TTL
+ * seconds. Also, type an adjacent message. 
+ */
+async function draw_line(id, latA, lonA, latB, lonB, color, ttl, msg)
+{
+	/* Create a new path and define its ID and color. */
+	let path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+	path.setAttribute("id", id);
+	path.setAttribute("stroke", color);
+	path.setAttribute("fill", "transparent");
+
+	/* Translate A and B to coordinates on the screen. */
+	let a = to_translated(to_cartesian(latA, lonA));
+	let b = to_translated(to_cartesian(latB, lonB));
+
+	/* Define the path and create a straight line */
+	path.setAttribute("d", `M ${a[0]} ${a[1]} L ${b[0]} ${b[1]}`);
+
+	/* Append the newly created path to the map-renders SVG. */
+	$("#map-renders").append(path);
+
+	/* Create the message. */
+	let message = document.createElement("p");
+	message.setAttribute("id", id+"-msg");
+	$("#map-text").append(message);
+	$(message).css("color", color);
+	$(message).css("left", a[0]);
+	$(message).css("top", a[1]);
+
+	/* Type the message. */
+	typewriter($(message), msg, 25);
+
+	/* Animate the line. */
+	let anim = $(path).drawsvg();
+	anim.drawsvg("animate");
+
+	/* Wait until the line is done animating. */
+	await sleep(1000);
+
+	/* Fade out the line and text. */
+	await sleep(ttl*1000);
+	$(path).animate({opacity: 0}, 1000);
+	$(message).animate({opacity: 0}, 1000);
+
+	/* Delete the line and text. */
+	await sleep(1000);
+	$(path).remove();
+	$(message).remove();
+}
+

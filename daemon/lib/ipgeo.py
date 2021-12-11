@@ -10,12 +10,15 @@ def ipgeo(ip: str) -> tuple:
 	uses ip-api.com.
 	"""
 
-	if len(ip) > 0:
-		data = requests.get(ENDPOINT + ip).content.decode()
-		jdat = json.loads(data)
-		return (jdat["lat"], jdat["lon"])
-	else:
-		data = requests.get(ENDPOINT + ip).content.decode()
-		jdat = json.loads(data)
-		return (jdat["query"], jdat["lat"], jdat["lon"])
+	try:
+		if len(ip) > 0:
+			data = requests.get(ENDPOINT + ip).content.decode()
+			jdat = json.loads(data)
+			return (jdat["lat"], jdat["lon"])
+		else:
+			data = requests.get(ENDPOINT + ip).content.decode()
+			jdat = json.loads(data)
+			return (jdat["query"], jdat["lat"], jdat["lon"])
+	except:
+		return ("?", "?")
 

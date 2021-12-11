@@ -127,7 +127,7 @@ def forward(
 				elif q:=cache.session.query(cache.IP).filter_by(ip=route[hop]).first():
 					json["traceroute"][hop] = {route[hop]: (q.latitude, q.longitude)}
 				else:
-					hopCoordinates = ipgeo(json["attacker_ip_address"])
+					hopCoordinates = ipgeo(route[hop])
 					json["traceroute"][hop] = {route[hop]: hopCoordinates}
 					cache.session.add(cache.IP(
 						route[hop], hopCoordinates[0], hopCoordinates[1]))

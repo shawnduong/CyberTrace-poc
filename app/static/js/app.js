@@ -236,22 +236,24 @@ function update()
 			{
 				if (id > since)  since = id;
 
-				draw_vector(id, v.attacker_lat, v.attacker_lon, v.victim_lat,
-					v.victim_lon, "#FFFFFF", 5, 3,
-					`[${v.module_name}] ${v.attack_description}`);
+				/* Draw the vector. */
+				draw_vector(id, v.attacker_lat, v.attacker_lon, v.victim_lat, v.victim_lon, "#FFFFFF", 5, 3,
+					`[${v.module_name}] ${v.attack_description}`, 2, 7, v.attacker_ip_address);
 
+				/* Add the attacker to the list of attackers and draw their node. */
 				if (!(v.attacker_ip_address in attackers))
 				{
 					attackers[v.attacker_ip_address] = [v.attacker_lat, v.attacker_lon];
 					draw_node(v.attacker_ip_address, v.attacker_lat, v.attacker_lon,
-						"#FF0000", 2, v.attacker_ip_address);
+						"#FF0000", 2, v.attacker_ip_address, 2, 2);
 				}
 
+				/* Add the defender to the list of defenders and draw their node. */
 				if (!(v.victim_ip_address in defenders))
 				{
 					defenders[v.victim_ip_address] = [v.victim_lat, v.victim_lon];
 					draw_node(v.victim_ip_address, v.victim_lat, v.victim_lon,
-						"#00FF00", 2, v.victim_ip_address);
+						"#00FF00", 2, v.victim_ip_address, 2, 2);
 				}
 			});
 		},
@@ -279,8 +281,10 @@ function to_translated(e)
 /* Draw a vector of id with some color from A to B with a lifetime of TTL
  * seconds, making a splash of radius r at B. Note that this "vector" has no
  * "arrowhead," instead replaced by a splash. Also, type an adjacent message.
+ * An additional message offset may be specified. The IP is used to class the
+ * messages at the attack origin.
  */
-async function draw_vector(id, latA, lonA, latB, lonB, color, ttl, r, msg)
+async function draw_vector(id, latA, lonA, latB, lonB, color, ttl, r, msg, msgOffX, msgOffY, ip)
 {
 	/* Create a new path and define its ID and color. */
 	let path = document.createElementNS("http://www.w3.org/2000/svg", "path");
@@ -304,13 +308,21 @@ async function draw_vector(id, latA, lonA, latB, lonB, color, ttl, r, msg)
 	/* Append the newly created path to the map-renders SVG. */
 	$("#map-renders").append(path);
 
+	/* Push all other existing messages down by 5 units. */
+	$("."+ip.replaceAll(".", "-")).each(function(i, obj)
+	{
+		console.log(obj);
+		$(obj).css("top", parseFloat($(obj).css("top"))+5);
+	});
+
 	/* Create the message. */
 	let message = document.createElement("p");
 	message.setAttribute("id", id+"-msg");
+	message.setAttribute("class", ip.replaceAll(".", "-"));
 	$("#map-text").append(message);
 	$(message).css("color", color);
-	$(message).css("left", a[0]);
-	$(message).css("top", a[1]);
+	$(message).css("left", a[0]+msgOffX);
+	$(message).css("top", a[1]+msgOffY);
 
 	/* Type the message. */
 	typewriter($(message), msg, 25);
@@ -350,15 +362,15 @@ async function draw_vector(id, latA, lonA, latB, lonB, color, ttl, r, msg)
 }
 
 /* Draw a node of id with some color at (lat,lon) and radius r with an attached
-   message printed near it. */
-function draw_node(id, lat, lon, color, r, msg)
+   message printed near it. An additional message offset may be specified. */
+function draw_node(id, lat, lon, color, r, msg, msgOffX, msgOffY)
 {
 	/* Translate (lat,lon) to coordinates on the screen. */
 	let point = to_translated(to_cartesian(lat, lon));
 
 	/* Create a new node and define its ID and color. */
 	let node = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-	node.setAttribute("id", id+"-node");
+	node.setAttribute("id", id.replaceAll(".", "-")+"-node");
 	node.setAttribute("cx", point[0]);
 	node.setAttribute("cy", point[1]);
 	node.setAttribute("r", r);
@@ -370,11 +382,11 @@ function draw_node(id, lat, lon, color, r, msg)
 
 	/* Create the message. */
 	let message = document.createElement("p");
-	message.setAttribute("id", id+"-node-msg");
+	message.setAttribute("id", id.replaceAll(".", "-")+"-node-msg");
 	$("#map-text").append(message);
 	$(message).css("color", color);
-	$(message).css("left", point[0]);
-	$(message).css("top", point[1]);
+	$(message).css("left", point[0]+msgOffX);
+	$(message).css("top", point[1]+msgOffY);
 
 	/* Type the message. */
 	typewriter($(message), msg, 25);

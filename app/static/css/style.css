@@ -108,10 +108,15 @@ body {
 	width: 100%;
 }
 
+#map-text {
+	position: relative;
+}
+
 #map-text p {
+	display: float;
 	font-family: Source;
 	font-size: 4px;
-	position: relative;
+	position: absolute;
 }
 
 #registration-rejected {

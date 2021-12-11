@@ -126,7 +126,9 @@ body {
 	font-family: Montserrat;
 }
 
-#registration-pending {
+#registration-pending,
+#logged-out
+{
 	color: var(--success);
 	display: inline-block;
 	padding-left: 8px;

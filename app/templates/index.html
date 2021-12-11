@@ -42,6 +42,8 @@
 						<h5 id="registration-pending">Registration awaiting admin approval.</h5>
 					{% elif pending_approval %}
 						<h5 id="login-failed">Your account is awaiting admin approval.</h5>
+					{% elif loggedOut %}
+						<h5 id="logged-out">You have successfully logged out.</h5>
 					{% endif %}
 				</form>
 				<br><br>

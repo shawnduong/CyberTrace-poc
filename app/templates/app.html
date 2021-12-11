@@ -19,7 +19,7 @@
 			<ul>
 				<li id="settings-greeting">GREETINGS {{ current_user.username | upper }}</li>
 				<li id="joshua" style="height: 4ch"></li>
-				<li><a class="link" href="">LOG OUT</a></li>
+				<li><a class="link" href="{{ url_for('logout') }}">LOG OUT</a></li>
 			</ul>
 		</div>
 	</div>

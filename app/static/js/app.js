@@ -14,7 +14,7 @@ const INTERVAL = 1000;
 /* List of discovered attackers:[lat,lon]. */
 let attackers = {};
 
-/* List of discovered intermediate hops, {dest:{hop1:{ip:[lat,lon]}, hop2:...}}. */
+/* List of discovered intermediate routes start:{dest:{hop1:{ip:[lat,lon]}, hop2:...}}. */
 let routes = {};
 
 /* List of discovered defenders:[lat,lon]. */
@@ -268,7 +268,8 @@ function update()
 				if (id > since)  since = id;
 
 				/* Store the route. */
-				routes[v.attacker_ip_address] = v.traceroute;
+				if (!(v.victim_ip_address in routes))  routes[v.victim_ip_address] = {};
+				routes[v.victim_ip_address][v.attacker_ip_address] = v.traceroute;
 
 				/* Draw the vector. */
 				draw_vector(id, v.attacker_lat, v.attacker_lon, v.victim_lat, v.victim_lon, "#FFFFFF", 5, 3,
@@ -345,7 +346,6 @@ async function draw_vector(id, latA, lonA, latB, lonB, color, ttl, r, msg, msgOf
 	/* Push all other existing messages down by 5 units. */
 	$("."+ip.replaceAll(".", "-")).each(function(i, obj)
 	{
-		console.log(obj);
 		$(obj).css("top", parseFloat($(obj).css("top"))+5);
 	});
 
@@ -427,14 +427,15 @@ function draw_node(id, lat, lon, color, r, msg, msgOffX, msgOffY)
 }
 
 /* Draw a line of id with some color from A to B with a lifetime of TTL
- * seconds. Also, type an adjacent message. 
+ * seconds. Also, type an adjacent message. Speed multiplier starts at 1.0.
  */
-async function draw_line(id, latA, lonA, latB, lonB, color, ttl, msg)
+async function draw_line(id, latA, lonA, latB, lonB, color, width, ttl, msg, speed)
 {
 	/* Create a new path and define its ID and color. */
 	let path = document.createElementNS("http://www.w3.org/2000/svg", "path");
 	path.setAttribute("id", id);
 	path.setAttribute("stroke", color);
+	path.setAttribute("stroke-width", width);
 	path.setAttribute("fill", "transparent");
 
 	/* Translate A and B to coordinates on the screen. */
@@ -459,7 +460,7 @@ async function draw_line(id, latA, lonA, latB, lonB, color, ttl, msg)
 	typewriter($(message), msg, 25);
 
 	/* Animate the line. */
-	let anim = $(path).drawsvg();
+	let anim = $(path).drawsvg({duration: 1000* (1/speed)});
 	anim.drawsvg("animate");
 
 	/* Wait until the line is done animating. */
@@ -476,3 +477,51 @@ async function draw_line(id, latA, lonA, latB, lonB, color, ttl, msg)
 	$(message).remove();
 }
 
+/* Delayed wrapper for draw_line. Delay is in ms. */
+async function draw_line_d(id, latA, lonA, latB, lonB, color, width, ttl, msg, speed, delay)
+{
+	await sleep(delay);
+	draw_line(id, latA, lonA, latB, lonB, color, width, ttl, msg, speed);
+}
+
+/* Delayed wrapper for draw_node. Delay is in ms. */
+async function draw_node_d(id, lat, lon, color, r, msg, msgOffX, msgOffY, delay)
+{
+	await sleep(delay);
+	draw_node(id, lat, lon, color, r, msg, msgOffX, msgOffY);
+}
+
+/* Draw a series of lines and nodes representing the route to reach some destination. */
+async function draw_route(start, dest)
+{
+	/* Destination not in route implies there is no documented route. */
+	if (!(dest in routes[start]))  return -1;
+
+	let tail   = [defenders[start][0], defenders[start][1]];
+	let hopNo  = 0;
+
+	/* Draw all the hops. */
+	$.each(routes[start][dest], function(hop, v)
+	{
+		let hopIP  = Object.keys(v)[0];
+		let hopLat = v[Object.keys(v)[0]][0];
+		let hopLon = v[Object.keys(v)[0]][1];
+
+		if (hopIP == "?" || hopLat == -999 || hopLon == -999)  return;
+
+		hopNo = hop;
+
+		if (! $("#"+hopIP.replaceAll(".", "-")+"-node").length)
+		{
+			draw_line_d("route-"+start+"-to-"+dest+"-hop"+hopNo, tail[0], tail[1],
+				hopLat, hopLon, "white", 0.3, 15, "", 5, 1000*hopNo/5);
+			draw_node_d(hopIP, hopLat, hopLon, "white", 0.3, "", 0, 0, 1000*hopNo/5 + 50);
+			tail = [hopLat, hopLon];
+		}
+	});
+
+	/* Ensure a connection to the dest. */
+	hopNo++;
+	draw_line_d("route-"+start+"-to-"+dest+"-hop"+hopNo, tail[0], tail[1],
+		attackers[dest][0], attackers[dest][1], "white", 0.3, 15, "", 5, 1000*(hopNo+1)/5);
+}

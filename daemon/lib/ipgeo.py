@@ -20,5 +20,5 @@ def ipgeo(ip: str) -> tuple:
 			jdat = json.loads(data)
 			return (jdat["query"], jdat["lat"], jdat["lon"])
 	except:
-		return ("?", "?")
+		return (-999, -999)
 

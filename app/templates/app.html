@@ -5,6 +5,25 @@
 
 <body>
 
+	<div id="settings-prompt">
+		<img src="{{ url_for('static', filename='svg/settings.svg') }}"/>
+	</div>
+
+	<div id="settings" style="display: none; left: -420px;">
+		<div id="settings-head">
+			<center>
+				<h2>SETTINGS</h2>
+			</center>
+		</div>
+		<div id="settings-options">
+			<ul>
+				<li id="settings-greeting">GREETINGS {{ current_user.username | upper }}</li>
+				<li id="joshua" style="height: 4ch"></li>
+				<li><a class="link" href="">LOG OUT</a></li>
+			</ul>
+		</div>
+	</div>
+
 	<div id="map">
 		<div id="map-geogrid">
 			<svg id="map-renders">

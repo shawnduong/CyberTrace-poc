@@ -133,6 +133,41 @@ body {
 	font-family: Montserrat;
 }
 
+#settings {
+	background-color: var(--grey-a);
+	color: var(--text-a);
+	font-family: Source;
+
+	height: 100%;
+	width: 420px;
+	position: fixed;
+	z-index: 3;
+}
+
+#settings-head {
+	width: 100%;
+	margin-top: 24px;
+}
+
+#settings-options {
+	margin-top: 40px;
+	margin-left: 16px;
+}
+
+#settings-options ul {
+	list-style-type: none;
+}
+
+#settings-prompt {
+	padding: 16px;
+	position: fixed;
+	z-index: 4;
+}
+
+#settings-prompt:hover {
+	cursor: pointer;
+}
+
 #signup {
 	color: var(--url);
 	font-style: italic;
@@ -190,6 +225,11 @@ body {
 	margin-top: 4px;
 	margin-bottom: 4px;
 	width: 100%;
+}
+
+.link {
+	color: var(--url);
+	text-decoration: none;
 }
 
 .scroll-none {

@@ -83,6 +83,34 @@ $("#map-geogrid").click(function(e)
 	coord.y += OFFSET.y;
 });
 
+/* Activate the settings menu upon click. */
+$("#settings-prompt").click(function()
+{
+	if ($("#settings").css("display") == "none")
+	{
+		$("#settings").css("display", "block");
+		$("#settings").animate({left: 0}, 100, "linear");
+	}
+	else
+	{
+		$("#settings").animate({left: -420}, 100, function()
+		{
+			$("#settings").css("display", "none");
+		});
+	}
+});
+
+/* Easter egg. */
+$("#settings-greeting").click(function()
+{
+	typewriter($("#joshua"), "A STRANGE GAME.", 25);
+	rtypewriter_d($("#joshua"), 25, 2000);
+	typewriter_d($("#joshua"), "THE ONLY WINNING MOVE IS NOT TO PLAY.", 25, 2500);
+	rtypewriter_d($("#joshua"), 25, 6500);
+	typewriter_d($("#joshua"), "HOW ABOUT A NICE GAME OF CHESS?", 25, 7500);
+	rtypewriter_d($("#joshua"), 25, 11000);
+});
+
 /* Increment or decrement map zoom by step values of STEP upon scroll. */
 $("#map").on("wheel", function(e)
 {

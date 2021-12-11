@@ -11,6 +11,12 @@ const RSCALE = {s: 0.862, x: 1.000, y: 0.953};
 /* Polling interval for updates. */
 const INTERVAL = 1000;
 
+/* List of discovered attackers:[lat,lon]. */
+let attackers = {};
+
+/* List of discovered defenders:[lat,lon]. */
+let defenders = {};
+
 /* Counter for the last event serial number received. -1 will assign this to
    the most recent event serial number in the API's database upon start. */
 let since = -1;
@@ -234,8 +240,19 @@ function update()
 					v.victim_lon, "#FFFFFF", 5, 3,
 					`[${v.module_name}] ${v.attack_description}`);
 
-				/* TODO: Once Jet finishes the node render function, then that
-				   function will also be called here. */
+				if (!(v.attacker_ip_address in attackers))
+				{
+					attackers[v.attacker_ip_address] = [v.attacker_lat, v.attacker_lon];
+					draw_node(v.attacker_ip_address, v.attacker_lat, v.attacker_lon,
+						"#FF0000", 2, v.attacker_ip_address);
+				}
+
+				if (!(v.victim_ip_address in defenders))
+				{
+					defenders[v.victim_ip_address] = [v.victim_lat, v.victim_lon];
+					draw_node(v.victim_ip_address, v.victim_lat, v.victim_lon,
+						"#00FF00", 2, v.victim_ip_address);
+				}
 			});
 		},
 		complete: function()

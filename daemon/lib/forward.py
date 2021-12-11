@@ -7,6 +7,7 @@ from lib.auxiliary import *
 from lib.CacheDB import *
 from lib.ipgeo import *
 from lib.ModuleDB import *
+from lib.traceroute import *
 from termcolor import colored
 
 def forward(
@@ -50,6 +51,9 @@ def forward(
 			"attacker_ip_address"  : None,
 			"attacker_lat"         : None,
 			"attacker_lon"         : None,
+
+			# Traceroute information.
+			"traceroute"           : None,
 		}
 
 		# Time information.
@@ -104,14 +108,33 @@ def forward(
 		else:
 			json["attacker_ip_address"] = "IP UNKNOWN"
 
-		# Get the attacker coordinates, first checking the cache.
+		# Get the attacker coordinates and traceroute, first checking the cache.
 		if q:=cache.session.query(cache.IP).filter_by(ip=json["attacker_ip_address"]).first():
-			json["attacker_lat"] = q.latitude
-			json["attacker_lon"] = q.longitude
+			json["attacker_lat"]  = q.latitude
+			json["attacker_lon"]  = q.longitude
+			json["traceroute"]    = q.traceroute
+
 		else:
+
 			json["attacker_lat"], json["attacker_lon"] = ipgeo(json["attacker_ip_address"])
+			json["traceroute"] = {}
+			route = traceroute(json["attacker_ip_address"])
+
+			# Either pull from cache or get+push to cache the intermediate hop coordinates.
+			for hop in route.keys():
+				if route[hop] == "?":
+					json["traceroute"][hop] = {route[hop]: ("?", "?")}
+				elif q:=cache.session.query(cache.IP).filter_by(ip=route[hop]).first():
+					json["traceroute"][hop] = {route[hop]: (q.latitude, q.longitude)}
+				else:
+					hopCoordinates = ipgeo(json["attacker_ip_address"])
+					json["traceroute"][hop] = {route[hop]: hopCoordinates}
+					cache.session.add(cache.IP(
+						route[hop], hopCoordinates[0], hopCoordinates[1]))
+					cache.session.commit()
+
 			cache.session.add(cache.IP(
-				json["attacker_ip_address"], json["attacker_lat"], json["attacker_lon"]))
+				json["attacker_ip_address"], json["attacker_lat"], json["attacker_lon"], json["traceroute"]))
 			cache.session.commit()
 
 		# Discard the now-processed data.
@@ -135,6 +158,14 @@ def forward(
 		for k in json.keys():
 			if type(json[k]) is str:
 				log(NORMAL, f"|     \"{k}\": %s," % colored(f"\"{json[k]}\"", "yellow"))
+			elif type(json[k]) is dict:
+				log(NORMAL, f"|     \"{k}\":")
+				log(NORMAL, f"|      %s" % colored("{", "yellow"))
+				for subk in json[k].keys():
+					log(NORMAL, f"|          %s %s%s" % (
+						colored(f"{subk}:", "yellow"), colored(json[k][subk], "red"),
+						colored(f",", "yellow")))
+				log(NORMAL, f"|      %s," % colored("}", "yellow"))
 			else:
 				log(NORMAL, f"|     \"{k}\": %s," % colored(f"{json[k]}", "yellow"))
 

@@ -78,12 +78,13 @@ class Event(db.Model):
 	attacker_ip_address  = db.Column(db.String(64))
 	attacker_lat         = db.Column(db.Float)
 	attacker_lon         = db.Column(db.Float)
+	traceroute           = db.Column(db.JSON)
 
 	def __init__(self, epoch_timestamp=-1, module_id=-1, module_name="",
 		module_description="", attack_type=-1, attack_description="",
 		victim_ip_version=-1, victim_ip_address="", victim_lat=-999.0,
 		victim_lon=-999.0, attacker_ip_version=-1, attacker_ip_address="",
-		attacker_lat=-999.0, attacker_lon=-999.0
+		attacker_lat=-999.0, attacker_lon=-999.0, traceroute={}
 	):
 
 		self.epoch_timestamp      = epoch_timestamp
@@ -100,4 +101,5 @@ class Event(db.Model):
 		self.attacker_ip_address  = attacker_ip_address
 		self.attacker_lat         = attacker_lat
 		self.attacker_lon         = attacker_lon
+		self.traceroute           = traceroute
 

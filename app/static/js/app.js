@@ -14,6 +14,9 @@ const INTERVAL = 1000;
 /* List of discovered attackers:[lat,lon]. */
 let attackers = {};
 
+/* List of discovered intermediate hops, {dest:{hop1:{ip:[lat,lon]}, hop2:...}}. */
+let routes = {};
+
 /* List of discovered defenders:[lat,lon]. */
 let defenders = {};
 
@@ -263,6 +266,9 @@ function update()
 			$.each(response, function(id, v)
 			{
 				if (id > since)  since = id;
+
+				/* Store the route. */
+				routes[v.attacker_ip_address] = v.traceroute;
 
 				/* Draw the vector. */
 				draw_vector(id, v.attacker_lat, v.attacker_lon, v.victim_lat, v.victim_lon, "#FFFFFF", 5, 3,

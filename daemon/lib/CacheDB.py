@@ -24,20 +24,22 @@ class CacheDB:
 	class IP(base):
 		"""
 		A definition for an IP address, relating an IPv4 or IPv6 address to a
-		set of latitude, longitude coordinates.
+		set of latitude, longitude coordinates and an optional traceroute record.
 		"""
 
 		__tablename__ = "ip"
 
-		ip         = db.Column(db.String, primary_key=True)
-		latitude   = db.Column(db.Float, nullable=False)
-		longitude  = db.Column(db.Float, nullable=False)
+		ip          = db.Column(db.String, primary_key=True)
+		latitude    = db.Column(db.Float, nullable=False)
+		longitude   = db.Column(db.Float, nullable=False)
+		traceroute  = db.Column(db.JSON , nullable=True )
 
-		def __init__(self, ip, latitude, longitude):
+		def __init__(self, ip, latitude, longitude, traceroute=None):
 
-			self.ip         = ip
-			self.latitude   = latitude
-			self.longitude  = longitude
+			self.ip          = ip
+			self.latitude    = latitude
+			self.longitude   = longitude
+			self.traceroute  = traceroute
 
 	def __init__(self, path: str):
 

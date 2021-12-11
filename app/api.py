@@ -24,6 +24,7 @@ def report():
 			request.json["attacker_ip_address"],
 			request.json["attacker_lat"],
 			request.json["attacker_lon"],
+			request.json["traceroute"],
 		)
 		db.session.add(event)
 		db.session.commit()
@@ -66,6 +67,7 @@ def update(since):
 				"attacker_ip_address"  : event.attacker_ip_address,
 				"attacker_lat"         : event.attacker_lat,
 				"attacker_lon"         : event.attacker_lon,
+				"traceroute"           : event.traceroute,
 			}
 
 		return response, 200

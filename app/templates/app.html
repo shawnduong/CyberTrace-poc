@@ -32,11 +32,17 @@
 					<div id="node-interface" style="display: none;">
 						<p id="node-ip" style="display: none;"></p>
 						<ul id="node-options">
-							<li onclick="node_traceroute()">&gt; Trace Route</li>
+							<li id="node-opt-traceroute" onclick="node_traceroute()">
+								&gt; Trace Route
+							</li>
 
 							<!-- Replace this with the actual function once Mary finishes her part. -->
 							<li onclick="node_moreinfo()">&gt; More Info</li>
 						</ul>
+					</div>
+					<div id="node-traceroute" style="display: none;">
+						<p>From:</p>
+						<ul id="node-traceroute-origins"></ul>
 					</div>
 				</foreignObject>
 			</svg>

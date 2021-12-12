@@ -531,6 +531,10 @@ async function draw_route(start, dest)
 /* Node interface pops up upon clicking a node. */
 function node_interface(object, ip)
 {
+	$("#node-traceroute").css("display", "none");
+	$("#node-opt-traceroute").css("background-color", "");
+	$("#node-opt-traceroute").css("color", "");
+
 	if ($("#node-interface").css("display") == "none" || $("#node-ip").html() != ip)
 	{
 		$("#node-interface").css("display", "block");
@@ -547,4 +551,38 @@ function node_interface(object, ip)
 /* Node interface for tracerouting. */
 function node_traceroute()
 {
+	if ($("#node-traceroute").css("display") == "none")
+	{
+		$("#node-opt-traceroute").css("background-color", "var(--grey-a)");
+		$("#node-opt-traceroute").css("color", "var(--text-a)");
+
+		$("#node-traceroute").css("display", "block");
+		$("#node-traceroute").css("left", (parseFloat($("#node-interface").css("left"))+48.0)+"px");
+		$("#node-traceroute").css("top", (parseFloat($("#node-interface").css("top"))+0.0)+"px");
+
+		let origins = [];
+
+		/* Compile an array of possible origins. */
+		$.each(routes, function(start, dests)
+		{
+			if ($("#node-ip").html() in dests)  origins.push(start);
+		});
+
+		/* Generate the list items based on possible origins. */
+		for (let i = 0; i < origins.length; i++)
+		{
+			let li = document.createElement("li");
+			li.innerHTML = `&gt; ${origins[i]}`;
+			li.setAttribute("onclick", `draw_route("${origins[i]}", $("#node-ip").html())`);
+
+			$("#node-traceroute-origins").append(li);
+		}
+	}
+	else
+	{
+		$("#node-opt-traceroute").css("background-color", "var(--grey-b)");
+		$("#node-opt-traceroute").css("color", "var(--text-b)");
+
+		$("#node-traceroute").css("display", "none");
+	}
 }

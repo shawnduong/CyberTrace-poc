@@ -145,17 +145,37 @@ body {
 	position: fixed;
 }
 
-#node-options {
+#node-traceroute {
+	background-color: var(--grey-a);
+	color: var(--text-a);
+	font-family: Source;
+	font-size: 4px;
+
+	width: 48px;
+	position: fixed;
+}
+
+#node-options,
+#node-traceroute-origins
+{
 	list-style-type: none;
 }
 
-#node-options li {
+#node-options li
+#node-traceroute-origins
+{
 	width: 100%;
 }
 
 #node-options li:hover {
 	background-color: var(--grey-a);
 	color: var(--text-a);
+	cursor: pointer;
+}
+
+#node-traceroute-origins li:hover {
+	background-color: var(--grey-b);
+	color: var(--text-b);
 	cursor: pointer;
 }
 

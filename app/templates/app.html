@@ -27,24 +27,72 @@
 	<div id="map">
 		<div id="map-geogrid">
 			<svg id="map-renders">
-				<foreignObject width="100%" height="100%" requiredExtensions="http://www.w3.org/1999/xhtml">
-					<div id="map-text" xmlns="http://www.w3.org/1999/xhtml"></div>
-					<div id="node-interface" style="display: none;">
-						<p id="node-ip" style="display: none;"></p>
-						<ul id="node-options">
-							<li id="node-opt-traceroute" onclick="node_traceroute()">
-								&gt; Trace Route
-							</li>
+				<foreignObject width="100%" height="100%" requiredExtensions="http://www.w3.org/1999/xhtml%22%3E
+                    <div id="map-text" xmlns="http://www.w3.org/1999/xhtml%22%3E</div>
+                    <div id="node-interface" style="display: none;">
+                        <p id="node-ip" style="display: none;"></p>
+                        <ul id="node-options">
+                            <li id="node-opt-traceroute" onclick="node_traceroute()">
+                                &gt; Trace Route
+                            </li>
 
-							<!-- Replace this with the actual function once Mary finishes her part. -->
-							<li onclick="node_moreinfo()">&gt; More Info</li>
-						</ul>
-					</div>
-					<div id="node-traceroute" style="display: none;">
-						<p>From:</p>
-						<ul id="node-traceroute-origins"></ul>
-					</div>
-				</foreignObject>
+                            <!-- Replace this with the actual function once Mary finishes her part. -->
+                            <li id="node-opt-more-info" 
+                                class="node-pot-more-info" 
+                                alt="Node's More Info Button"
+                                onclick="node_more_info()"
+                            >
+                                &gt; More Info
+                            </li>
+                        </ul>
+                    </div>
+                    <div id="node-traceroute" style="display: none;">
+                        <p>From:</p>
+                        <ul id="node-traceroute-origins"></ul>
+                    </div>
+                    <div id="node-more-info" 
+                         class="node-more-info" 
+                         alt="More Info on Selected Node"
+                    >
+                        <p>Node: </p>
+                        <div id="node-ip" class="nmicontent">
+                            <p>&gt; IP Address: </p>
+                            <p id="node-ip-text"></p>
+                        </div>
+                        <div id="node-geo-coords" class="nmicontent">
+                            <p>&gt; Geographic Coordinates: </p>
+                            <p id="node-geo-coords-text"></p>
+                        </div>
+                        <div id="node-confidence-rating" class="nmicontent">
+                            <p>&gt; Confidence Rating: </p>
+                            <p id="node-confidence-rating-text"></p>
+                        </div>
+                        <div id="node-first-detected" class="nmicontent">
+                            <p>&gt; First Detection: </p>
+                            <p id="node-first-detected-text"></p>
+                        </div>
+                        <div id="node-last-detected" class="nmicontent">
+                            <p>&gt; Last Detection: </p>
+                            <p id="node-last-detected-text"></p>
+                        </div>
+                        <div id="node-num-of-attacks" class="nmicontent">
+                            <p>&gt; Number of Attacks: </p>
+                            <p id="node-num-of-attacks-text"></p>
+                        </div>
+                        <div id="node-affiliated-attacks" class="nmicontent">
+                            <p>&gt; Affiliated Attacks: </p>
+                            <ul id="node-affliated-attacks-list"></ul>
+                        </div>
+                        <div id="node-suspected-tools" class="nmicontent">
+                            <p>&gt; Suspected Tools: </p>
+                            <ul id="node-suspected-tools-list"></ul>
+                        </div>
+                        <div id="node-suspected-nodes" class="nmi__content">
+                            <p>&gt; Suspected Nodes: </p>
+                            <ul id="node-suspected-nodes-list"></ul>
+                        </div>
+                    </div>
+                </foreignObject>
 			</svg>
 		</div>
 		<div id="map-graphic">

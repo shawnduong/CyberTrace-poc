@@ -285,3 +285,19 @@ body {
 .scroll-none {
 	overflow: hidden;
 }
+
+.node-more-info {
+	display: none;
+	background-color: var(--grey-a);
+	color: var(--text-a);
+	font-family: Source;
+	font-size: 4px;
+	width: 60px;
+	position: fixed;
+	z-index: 99;
+}
+
+.nmi__content {
+	display: flex;
+	flex-direction: row;
+}

@@ -586,3 +586,35 @@ function node_traceroute()
 		$("#node-traceroute").css("display", "none");
 	}
 }
+
+/**
+ * More Info Box for each Node
+ * @description Provides a detailed list of information for each Node
+ * @enum
+ *  	1. The Node's IP Address
+ * 		2. The Node's approximate geographic coordinates
+ * 		3. A confidence rating in the Node's status as a proxy or not
+ * 		4. When the Node was first detected
+ * 		5. When the Node was last detected
+ * 		6. How many attacks the Node has been affiliated with
+ * 		7. The most common types of attacks the node has been affiliated with
+ * 		8. A compilation of suspected tools originating from the Node
+ * 		9. Suspected affiliated Nodes based on attack coordination
+ * 
+ * @returns void
+ * @requires Node
+ */
+function node_more_info() {
+	if ($("#node-more-info").css("display") == "none") {
+		$("#node-opt-more-info").css("background-color", "var(--grey-a)");
+		$("#node-opt-more-info").css("color", "var(--text-a)");
+		$("#node-more-info").css("display", "block");
+		$("#node-more-info").css("left", `${parseFloat($("#node-interface").css("left")) + 48.0}px`);
+		$("#node-more-info").css("top", `${parseFloat($("#node-interface").css("top")) + 5.0}px`);
+	} else {
+		// Apply Highlight to selected element in Node's Popup
+		$("#node-opt-more-info").css("background-color", "var(--grey-b)");
+		$("#node-opt-more-info").css("color", "var(--text-b)");
+		$("#node-more-info").css("display", "none");
+	}
+}

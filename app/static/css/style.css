@@ -135,6 +135,30 @@ body {
 	font-family: Montserrat;
 }
 
+#node-interface {
+	background-color: var(--grey-b);
+	color: var(--text-b);
+	font-family: Source;
+	font-size: 4px;
+
+	width: 48px;
+	position: fixed;
+}
+
+#node-options {
+	list-style-type: none;
+}
+
+#node-options li {
+	width: 100%;
+}
+
+#node-options li:hover {
+	background-color: var(--grey-a);
+	color: var(--text-a);
+	cursor: pointer;
+}
+
 #settings {
 	background-color: var(--grey-a);
 	color: var(--text-a);
@@ -232,6 +256,10 @@ body {
 .link {
 	color: var(--url);
 	text-decoration: none;
+}
+
+.node:hover {
+	cursor: pointer;
 }
 
 .scroll-none {

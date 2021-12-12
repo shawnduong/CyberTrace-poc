@@ -405,11 +405,13 @@ function draw_node(id, lat, lon, color, r, msg, msgOffX, msgOffY)
 	/* Create a new node and define its ID and color. */
 	let node = document.createElementNS("http://www.w3.org/2000/svg", "circle");
 	node.setAttribute("id", id.replaceAll(".", "-")+"-node");
+	node.setAttribute("class", "node");
 	node.setAttribute("cx", point[0]);
 	node.setAttribute("cy", point[1]);
 	node.setAttribute("r", r);
 	node.setAttribute("stroke", color);
 	node.setAttribute("fill", color);
+	node.setAttribute("onclick", `node_interface(this, "${id}")`);
 
 	/* Append the newly created node to the map-renders SVG. */
 	$("#map-renders").append(node);
@@ -524,4 +526,25 @@ async function draw_route(start, dest)
 	hopNo++;
 	draw_line_d("route-"+start+"-to-"+dest+"-hop"+hopNo, tail[0], tail[1],
 		attackers[dest][0], attackers[dest][1], "white", 0.3, 15, "", 5, 1000*(hopNo+1)/5);
+}
+
+/* Node interface pops up upon clicking a node. */
+function node_interface(object, ip)
+{
+	if ($("#node-interface").css("display") == "none" || $("#node-ip").html() != ip)
+	{
+		$("#node-interface").css("display", "block");
+		$("#node-interface").css("left", (parseFloat($(object).attr("cx"))+2.0)+"px");
+		$("#node-interface").css("top", (parseFloat($(object).attr("cy"))-16.0)+"px");
+		$("#node-ip").html(ip);
+	}
+	else
+	{
+		$("#node-interface").css("display", "none");
+	}
+}
+
+/* Node interface for tracerouting. */
+function node_traceroute()
+{
 }

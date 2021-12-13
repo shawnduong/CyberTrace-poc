@@ -24,8 +24,7 @@ function degrees(radians)
 	return (radians*180) / Math.PI
 }
 
-/* Given (lat,lon) geographic coordinates, output (x,y) Cartesian coordinates.
-   Zoom starts at 0 (no zoom) and may increase positively. */
+/* Given (lat,lon) geographic coordinates, output (x,y) Cartesian coordinates. */
 function to_cartesian(lat, lon)
 {
 	/* Return -1 if the lat is out of bounds. */

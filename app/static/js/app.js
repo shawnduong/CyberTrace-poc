@@ -267,10 +267,8 @@ function update()
 			{
 				if (id > since)  since = id;
 
-				console.log(v.attacker_lat + " " + v.attacker_lon);
-				console.log(v.victim_lat + " " + v.victim_lat);
+				
 				console.log(v.module_name);
-				//console.log(ip);
 
 				
 
@@ -336,6 +334,14 @@ async function draw_vector(id, latA, lonA, latB, lonB, color, ttl, r, msg, msgOf
 	path.setAttribute("id", id);
 	path.setAttribute("stroke", color);
 	path.setAttribute("fill", "transparent");
+	console.log("WHATS THE MESSAGE?", msg);
+	var matches = msg.match(/\[(.*?)\]/);
+
+	if (matches) {
+    var submatch = matches[1];
+	$("#node-suspected-tools-list").html(submatch);
+	console.log("attempt...");
+	}
 
 	/* Translate A and B to coordinates on the screen. */
 	let a = to_translated(to_cartesian(latA, lonA));
@@ -411,6 +417,9 @@ function draw_node(id, lat, lon, color, r, msg, msgOffX, msgOffY)
 {
 	/* Translate (lat,lon) to coordinates on the screen. */
 	let point = to_translated(to_cartesian(lat, lon));
+	console.log("ayooo message?", msg);
+	console.log("ayooo id?", msg);
+
 
 	/* Create a new node and define its ID and color. */
 	let node = document.createElementNS("http://www.w3.org/2000/svg", "circle");
@@ -423,7 +432,6 @@ function draw_node(id, lat, lon, color, r, msg, msgOffX, msgOffY)
 	node.setAttribute("fill", color);
 	node.setAttribute("onclick", `node_interface(this, "${id}", "${lat}", "${lon}")`);
 	let coords = String(lat) + " " + String(lon);
-	console.log("The one being rendered!!: " + coords);
 
 	/* Append the newly created node to the map-renders SVG. */
 	$("#map-renders").append(node);
@@ -554,13 +562,10 @@ function node_interface(object, ip, lat, lon)
 		$("#node-interface").css("top", (parseFloat($(object).attr("cy"))-16.0)+"px");
 		$("#node-ip").html(ip);
 		$('#node-ip-text').html(ip); 
-		console.log("helllllllllo", ip + " " + lat + " " + lon);
 		let coords = String(lat) + " " + String(lon);
-		console.log("The one being rendered in textbox??: " + coords);
 
 		//$('#node-geo-coords').html(coords)
 		$('#node-geo-coords-text').html(coords)
-		//console.log("IP IS" + ip);
 	
 	}
 	else

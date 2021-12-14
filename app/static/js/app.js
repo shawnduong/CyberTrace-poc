@@ -93,6 +93,24 @@ $("#settings-prompt").click(function()
 	{
 		$("#settings").css("display", "block");
 		$("#settings").animate({left: 0}, 100, "linear");
+
+		/* Populate the authorized hosts field. */
+		$.ajax(
+		{
+			url: "/api/list",
+			type: "GET",
+			success: function(response)
+			{
+				$("#settings-ahosts").empty();
+
+				for (let i = 0; i < response["HOSTS"].length; i++)
+				{
+					let li = document.createElement("li");
+					li.innerHTML = response["HOSTS"][i];
+					$("#settings-ahosts").append(li);
+				}
+			}
+		});
 	}
 	else
 	{
@@ -233,6 +251,41 @@ $("#map")
 	$("#map-graphic").css("top", tmpDrag.y);
 	$("#map-renders").css("left", tmpDrag.x);
 	$("#map-renders").css("top", tmpDrag.y);
+});
+
+$("#hostadd-form").submit(function()
+{
+	$.ajax(
+	{
+		url: "/api/add",
+		type: "POST",
+		data: $("#hostadd-form").serialize(),
+		success: function(response)
+		{
+			if (response["STATUS"] == "UNAUTHORIZED")
+			{
+				$("#hostadd-feedback").html("Host could not be added.");
+			}
+			else if (response["STATUS"] == "PRE-EXISTENT")
+			{
+				$("#hostadd-feedback").html("You already have this host!");
+			}
+			else if (response["STATUS"] == "SUCCESSFUL")
+			{
+				$("#hostadd-feedback").html("Host successfully added.");
+			}
+			else
+			{
+				$("#hostadd-feedback").html("Host could not be added.");
+			}
+		},
+		error: function(response)
+		{
+			$("#hostadd-feedback").html("Host could not be added.");
+		}
+	});
+
+	return false;
 });
 
 /* Sleep for ms many milliseconds. */

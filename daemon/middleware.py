@@ -11,6 +11,9 @@ from lib.ipgeo import *
 from lib.forward import *
 from lib.ModuleDB import *
 
+# Host key, unique per host.
+HOST_KEY = "YOUR_KEY_HERE"
+
 # Positional arguments.
 P_ARGUMENTS = {
 	("<PROTO>",)   : "Protocol the API is using (default=\"http\"; https unsupported currently)",
@@ -140,7 +143,7 @@ def main(args: list=["./main.py"]):
 	while True:
 
 		try:
-			forward(db, cache, s, selfIP,
+			forward(db, cache, s, HOST_KEY, selfIP,
 				settings["proto"], settings["ip"], settings["port"], settings["api"])
 			time.sleep(0.01)
 

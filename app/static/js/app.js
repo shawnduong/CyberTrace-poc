@@ -604,7 +604,7 @@ function node_traceroute()
  * @returns void
  * @requires Node
  */
-function node_more_info() {
+ function node_more_info() {
 	if ($("#node-more-info").css("display") == "none") {
 		$("#node-opt-more-info").css("background-color", "var(--grey-a)");
 		$("#node-opt-more-info").css("color", "var(--text-a)");

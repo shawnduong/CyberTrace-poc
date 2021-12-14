@@ -3,6 +3,26 @@ import hashlib
 from app import *
 from sqlalchemy import *
 
+@app.route("/api/list", methods=["GET"])
+@login_required
+def hlist():
+	"""
+	Give the user a JSON list of hosts they are associated with. This function
+	is called hlist to prevent a collision with the Python list function.
+	"""
+
+	try:
+		hosts = []
+
+		for result in Association.query.filter_by(user=current_user.id).all():
+			host  = result.id
+			hosts.append(Host.query.get(host).ip)
+
+		return {"HOSTS": hosts}
+
+	except:
+		return {"STATUS": "ERROR"}, 500
+
 @app.route("/api/add", methods=["POST"])
 @login_required
 def add():
@@ -20,13 +40,13 @@ def add():
 		if not (q:=Host.query.filter_by(ip=ip).first()):
 			return {"STATUS": "UNAUTHORIZED"}, 200
 
-		# Check if the host key is correct.
-		if not (k:=hashlib.sha1((key+ip).encode()).hexdigest()) == q.key:
-			return {"STATUS": "UNAUTHORIZED"}, 200
-
 		# Check if the association already exists.
 		if Association.query.filter_by(user=current_user.id, host=q.id).first():
 			return {"STATUS": "PRE-EXISTENT"}, 200
+
+		# Check if the host key is correct.
+		if not (k:=hashlib.sha1((key+ip).encode()).hexdigest()) == q.key:
+			return {"STATUS": "UNAUTHORIZED"}, 200
 
 		# Add the association.
 		association = Association(current_user.id, q.id)
@@ -36,8 +56,7 @@ def add():
 		# Send feedback.
 		return {"STATUS": "SUCCESSFUL"}, 200
 
-	except Exception as e:
-		print(e)
+	except:
 		return {"STATUS": "ERROR"}, 500
 
 @app.route("/api/report", methods=["POST"])

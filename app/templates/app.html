@@ -19,8 +19,8 @@
 			<ul>
 				<li id="settings-greeting"><b>GREETINGS {{ current_user.username | upper }}</b></li>
 				<li id="joshua" style="height: 4ch"></li>
+				<li><b>AUTHORIZED HOSTS</b></li>
 				<div id="settings-ahosts">
-					<li><b>AUTHORIZED HOSTS</b></li>
 				</div>
 				<br>
 				<li><b>ADD NEW HOST</b></li>
@@ -29,6 +29,7 @@
 					<input class="form-field" name="host_key" placeholder="Host Key"><br>
 					<input type="submit" value="Add Host" class="form-button">
 				</form>
+				<li id="hostadd-feedback" style="height: 4ch; margin-top: 8px;"></li>
 				<br>
 				<li><a class="link" href="{{ url_for('logout') }}">LOG OUT</a></li>
 			</ul>

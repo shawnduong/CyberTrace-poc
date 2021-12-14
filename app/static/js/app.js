@@ -93,6 +93,24 @@ $("#settings-prompt").click(function()
 	{
 		$("#settings").css("display", "block");
 		$("#settings").animate({left: 0}, 100, "linear");
+
+		/* Populate the authorized hosts field. */
+		$.ajax(
+		{
+			url: "/api/list",
+			type: "GET",
+			success: function(response)
+			{
+				$("#settings-ahosts").empty();
+
+				for (let i = 0; i < response["HOSTS"].length; i++)
+				{
+					let li = document.createElement("li");
+					li.innerHTML = response["HOSTS"][i];
+					$("#settings-ahosts").append(li);
+				}
+			}
+		});
 	}
 	else
 	{
@@ -244,11 +262,26 @@ $("#hostadd-form").submit(function()
 		data: $("#hostadd-form").serialize(),
 		success: function(response)
 		{
-			console.log("y", response);
+			if (response["STATUS"] == "UNAUTHORIZED")
+			{
+				$("#hostadd-feedback").html("Host could not be added.");
+			}
+			else if (response["STATUS"] == "PRE-EXISTENT")
+			{
+				$("#hostadd-feedback").html("You already have this host!");
+			}
+			else if (response["STATUS"] == "SUCCESSFUL")
+			{
+				$("#hostadd-feedback").html("Host successfully added.");
+			}
+			else
+			{
+				$("#hostadd-feedback").html("Host could not be added.");
+			}
 		},
 		error: function(response)
 		{
-			console.log("x", response);
+			$("#hostadd-feedback").html("Host could not be added.");
 		}
 	});
 

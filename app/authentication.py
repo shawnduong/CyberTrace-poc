@@ -5,7 +5,7 @@ from app import *
 
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
-from flask_login import LoginManager, login_user, logout_user
+from flask_login import LoginManager, current_user, login_user, logout_user
 
 # Define the admin interface.
 admin = Admin(app, name="Admin Panel", template_mode="bootstrap3")

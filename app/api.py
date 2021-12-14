@@ -1,11 +1,51 @@
+import hashlib
+
 from app import *
 from sqlalchemy import *
+
+@app.route("/api/add", methods=["POST"])
+@login_required
+def add():
+	"""
+	Verify that the user has the correct host key for the IP address, and then
+	associate them if their association does not already exist.
+	"""
+
+	try:
+
+		ip  = request.form["host_ip"]
+		key = request.form["host_key"]
+
+		# Check if the host exists in the database.
+		if not (q:=Host.query.filter_by(ip=ip).first()):
+			return {"STATUS": "UNAUTHORIZED"}, 200
+
+		# Check if the host key is correct.
+		if not (k:=hashlib.sha1((key+ip).encode()).hexdigest()) == q.key:
+			return {"STATUS": "UNAUTHORIZED"}, 200
+
+		# Check if the association already exists.
+		if Association.query.filter_by(user=current_user.id, host=q.id).first():
+			return {"STATUS": "PRE-EXISTENT"}, 200
+
+		# Add the association.
+		association = Association(current_user.id, q.id)
+		db.session.add(association)
+		db.session.commit()
+
+		# Send feedback.
+		return {"STATUS": "SUCCESSFUL"}, 200
+
+	except Exception as e:
+		print(e)
+		return {"STATUS": "ERROR"}, 500
 
 @app.route("/api/report", methods=["POST"])
 def report():
 	"""
 	Receive some POSTed JSON data about an event and store it in the event
-	table in the database.
+	table in the database. Additionally, store the host key in the database
+	if it is not already present.
 	"""
 
 	try:
@@ -28,7 +68,17 @@ def report():
 		)
 		db.session.add(event)
 		db.session.commit()
+
+		if not Host.query.filter_by(ip=request.json["victim_ip_address"]).first():
+			host = Host(
+				request.json["victim_ip_address"],
+				request.json["host_key"]
+			)
+			db.session.add(host)
+			db.session.commit()
+
 		return {"STATUS": "RECEIVED"}, 200
+
 	except:
 		return {"STATUS": "ERROR"}, 500
 

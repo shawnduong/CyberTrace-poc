@@ -13,6 +13,8 @@ class User(UserMixin, db.Model):
 	account type (0=>admin; 1=>user; 2=>pending).
 	"""
 
+	__tablename__ = "user"
+
 	id       = db.Column(db.Integer, primary_key=True)
 	username = db.Column(db.String(256), unique=True , nullable=False)
 	password = db.Column(db.String(256), unique=False, nullable=False)
@@ -57,11 +59,52 @@ class User(UserMixin, db.Model):
 
 		return False
 
+class Host(db.Model):
+	"""
+	A definition for a single host IP and its associated host key.
+	"""
+
+	__tablename__ = "host"
+
+	id  = db.Column(db.Integer, primary_key=True)
+	ip  = db.Column(db.String(64), unique=True, nullable=False)
+	key = db.Column(db.String(64), unique=True, nullable=False)
+
+	def __init__(self, ip, key):
+		"""
+		Constructor method for Host type objects.
+		"""
+
+		self.ip  = ip
+		self.key = key
+
+class Association(db.Model):
+	"""
+	A definition for a single user-host mapping, denoting that said user is
+	authorized to view data from such host.
+	"""
+
+	__tablename__ = "association"
+
+	id    = db.Column(db.Integer, primary_key=True)
+	user  = db.Column(db.Integer, db.ForeignKey(User.id), unique=False, nullable=False)
+	host  = db.Column(db.Integer, db.ForeignKey(Host.id), unique=False, nullable=False)
+
+	def __init__(self, user, host):
+		"""
+		Constructor method for Association type objects.
+		"""
+
+		self.user = user
+		self.host = host
+
 class Event(db.Model):
 	"""
 	A definition for a single event consisting of various types of information
 	sent by the daemon via the middleware.
 	"""
+
+	__tablename__ = "event"
 
 	id                   = db.Column(db.Integer, primary_key=True)
 	epoch_timestamp      = db.Column(db.Integer)

@@ -235,6 +235,26 @@ $("#map")
 	$("#map-renders").css("top", tmpDrag.y);
 });
 
+$("#hostadd-form").submit(function()
+{
+	$.ajax(
+	{
+		url: "/api/add",
+		type: "POST",
+		data: $("#hostadd-form").serialize(),
+		success: function(response)
+		{
+			console.log("y", response);
+		},
+		error: function(response)
+		{
+			console.log("x", response);
+		}
+	});
+
+	return false;
+});
+
 /* Sleep for ms many milliseconds. */
 function sleep(ms)
 {

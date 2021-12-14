@@ -266,6 +266,10 @@ body {
 	padding: 2px 4px 2px 4px;
 }
 
+.form-field {
+	margin: 2px 0px 4px 0px;
+}
+
 .input-field {
 	background-color: var(--grey-b);
 	border-style: none;

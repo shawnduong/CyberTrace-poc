@@ -102,6 +102,14 @@ def update(since):
 		response = {}
 
 		for event in db.session.query(Event).filter(Event.id > since).all():
+
+			# If the user is not associated with the host associated with this
+			# event, then skip over this event.
+			if not (hostID:=Host.query.filter_by(ip=event.victim_ip_address).first()):
+				continue
+			if not Association.query.filter_by(user=current_user.id, host=hostID.id).first():
+				continue
+
 			response[event.id] = {
 				"epoch_timestamp"      : event.epoch_timestamp,
 				"module_id"            : event.module_id,

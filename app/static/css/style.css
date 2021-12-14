@@ -260,6 +260,12 @@ body {
 	cursor: pointer;
 }
 
+.form-button {
+	background-color: var(--button);
+	border-style: none;
+	padding: 2px 4px 2px 4px;
+}
+
 .input-field {
 	background-color: var(--grey-b);
 	border-style: none;

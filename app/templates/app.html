@@ -17,8 +17,18 @@
 		</div>
 		<div id="settings-options">
 			<ul>
-				<li id="settings-greeting">GREETINGS {{ current_user.username | upper }}</li>
+				<li id="settings-greeting"><b>GREETINGS {{ current_user.username | upper }}</b></li>
 				<li id="joshua" style="height: 4ch"></li>
+				<div id="settings-ahosts">
+					<li><b>AUTHORIZED HOSTS</b></li>
+				</div>
+				<br>
+				<li><b>ADD NEW HOST</b></li>
+				<form>
+					<input type="htext" name="hkey" placeholder="Host Key">
+					<input type="submit" value="Add Host" class="form-button">
+				</form>
+				<br>
 				<li><a class="link" href="{{ url_for('logout') }}">LOG OUT</a></li>
 			</ul>
 		</div>

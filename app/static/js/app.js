@@ -267,11 +267,6 @@ function update()
 			{
 				if (id > since)  since = id;
 
-				
-				console.log(v.module_name);
-
-				
-
 
 				/* Store the route. */
 				if (!(v.victim_ip_address in routes))  routes[v.victim_ip_address] = {};
@@ -428,8 +423,7 @@ function draw_node(id, lat, lon, color, r, msg, msgOffX, msgOffY)
 	node.setAttribute("stroke", color);
 	node.setAttribute("fill", color);
 	node.setAttribute("onclick", `node_interface(this, "${id}", "${lat}", "${lon}")`);
-	let coords = String(lat) + " " + String(lon);
-
+	
 	/* Append the newly created node to the map-renders SVG. */
 	$("#map-renders").append(node);
 
@@ -562,7 +556,17 @@ function node_interface(object, ip, lat, lon)
 		let coords = String(lat) + " " + String(lon);
 
 		//$('#node-geo-coords').html(coords)
-		$('#node-geo-coords-text').html(coords)
+		$('#node-geo-coords-text').html(coords);
+
+		
+		if($('#node-first-detected-text').is(':empty')){
+			$('#node-first-detected-text').html(Date.now);
+		}
+		
+			$('#node-last-detected-text').html(Date.now);
+
+		
+				
 	
 	}
 	else

@@ -334,13 +334,11 @@ async function draw_vector(id, latA, lonA, latB, lonB, color, ttl, r, msg, msgOf
 	path.setAttribute("id", id);
 	path.setAttribute("stroke", color);
 	path.setAttribute("fill", "transparent");
-	console.log("WHATS THE MESSAGE?", msg);
 	var matches = msg.match(/\[(.*?)\]/);
 
 	if (matches) {
     var submatch = matches[1];
 	$("#node-suspected-tools-list").html(submatch);
-	console.log("attempt...");
 	}
 
 	/* Translate A and B to coordinates on the screen. */

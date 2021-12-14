@@ -415,8 +415,7 @@ function draw_node(id, lat, lon, color, r, msg, msgOffX, msgOffY)
 {
 	/* Translate (lat,lon) to coordinates on the screen. */
 	let point = to_translated(to_cartesian(lat, lon));
-	console.log("ayooo message?", msg);
-	console.log("ayooo id?", msg);
+	
 
 
 	/* Create a new node and define its ID and color. */

@@ -289,7 +289,9 @@ function update()
 					defenders[v.victim_ip_address] = [v.victim_lat, v.victim_lon];
 					draw_node(v.victim_ip_address, v.victim_lat, v.victim_lon,
 						"#00FF00", 2, v.victim_ip_address, 2, 2);
+					
 				}
+				
 			});
 		},
 		complete: function()
@@ -541,6 +543,7 @@ function node_interface(object, ip)
 		$("#node-interface").css("left", (parseFloat($(object).attr("cx"))+2.0)+"px");
 		$("#node-interface").css("top", (parseFloat($(object).attr("cy"))-16.0)+"px");
 		$("#node-ip").html(ip);
+		console.log("IP IS" + ip);
 	}
 	else
 	{
@@ -593,7 +596,7 @@ function node_traceroute()
  * @enum
  *  	1. The Node's IP Address
  * 		2. The Node's approximate geographic coordinates
- * 		3. A confidence rating in the Node's status as a proxy or not
+ * 		3. A confidence rating in the Node's status as a proxy or not (Left out for demo)
  * 		4. When the Node was first detected
  * 		5. When the Node was last detected
  * 		6. How many attacks the Node has been affiliated with
@@ -617,4 +620,8 @@ function node_more_info() {
 		$("#node-opt-more-info").css("color", "var(--text-b)");
 		$("#node-more-info").css("display", "none");
 	}
+}
+/* AJAX Function to call our API and render content inside of our node more info section */
+function load_node_content() {
+
 }

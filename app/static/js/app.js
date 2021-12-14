@@ -543,6 +543,7 @@ function node_interface(object, ip)
 		$("#node-interface").css("left", (parseFloat($(object).attr("cx"))+2.0)+"px");
 		$("#node-interface").css("top", (parseFloat($(object).attr("cy"))-16.0)+"px");
 		$("#node-ip").html(ip);
+		$('#node-ip-text').html(ip); 
 		console.log("IP IS" + ip);
 	}
 	else

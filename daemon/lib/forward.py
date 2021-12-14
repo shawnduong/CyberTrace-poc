@@ -1,3 +1,4 @@
+import hashlib
 import ipaddress
 import requests
 import socket
@@ -11,7 +12,7 @@ from lib.traceroute import *
 from termcolor import colored
 
 def forward(
-	db: ModuleDB, cache: CacheDB, sock: socket.socket, selfIP: str,
+	db: ModuleDB, cache: CacheDB, sock: socket.socket, hostKey: str, selfIP: str,
 	proto: str, ip: str, port: int, api: str
 ) -> None:
 	"""
@@ -27,6 +28,9 @@ def forward(
 
 		# Template for JSON data to POST.
 		json = {
+			# Host key.
+			"host_key"             : None,
+
 			# Time information.
 			"epoch_timestamp"      : None,
 
@@ -55,6 +59,10 @@ def forward(
 			# Traceroute information.
 			"traceroute"           : None,
 		}
+
+		# Host information. To prevent the chance of a collision with another
+		# host, the host key is hashed with the host IP.
+		json["host_key"] = hashlib.sha1((hostKey+selfIP).encode()).hexdigest()
 
 		# Time information.
 		json["epoch_timestamp"] = int(time.time())

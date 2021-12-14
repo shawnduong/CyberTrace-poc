@@ -267,6 +267,14 @@ function update()
 			{
 				if (id > since)  since = id;
 
+				console.log(v.attacker_lat + " " + v.attacker_lon);
+				console.log(v.victim_lat + " " + v.victim_lat);
+				console.log(v.module_name);
+				//console.log(ip);
+
+				
+
+
 				/* Store the route. */
 				if (!(v.victim_ip_address in routes))  routes[v.victim_ip_address] = {};
 				routes[v.victim_ip_address][v.attacker_ip_address] = v.traceroute;
@@ -413,7 +421,9 @@ function draw_node(id, lat, lon, color, r, msg, msgOffX, msgOffY)
 	node.setAttribute("r", r);
 	node.setAttribute("stroke", color);
 	node.setAttribute("fill", color);
-	node.setAttribute("onclick", `node_interface(this, "${id}")`);
+	node.setAttribute("onclick", `node_interface(this, "${id}", "${lat}", "${lon}")`);
+	let coords = String(lat) + " " + String(lon);
+	console.log("The one being rendered!!: " + coords);
 
 	/* Append the newly created node to the map-renders SVG. */
 	$("#map-renders").append(node);
@@ -531,7 +541,7 @@ async function draw_route(start, dest)
 }
 
 /* Node interface pops up upon clicking a node. */
-function node_interface(object, ip)
+function node_interface(object, ip, lat, lon)
 {
 	$("#node-traceroute").css("display", "none");
 	$("#node-opt-traceroute").css("background-color", "");
@@ -544,7 +554,14 @@ function node_interface(object, ip)
 		$("#node-interface").css("top", (parseFloat($(object).attr("cy"))-16.0)+"px");
 		$("#node-ip").html(ip);
 		$('#node-ip-text').html(ip); 
-		console.log("IP IS" + ip);
+		console.log("helllllllllo", ip + " " + lat + " " + lon);
+		let coords = String(lat) + " " + String(lon);
+		console.log("The one being rendered in textbox??: " + coords);
+
+		//$('#node-geo-coords').html(coords)
+		$('#node-geo-coords-text').html(coords)
+		//console.log("IP IS" + ip);
+	
 	}
 	else
 	{
@@ -624,5 +641,8 @@ function node_more_info() {
 }
 /* AJAX Function to call our API and render content inside of our node more info section */
 function load_node_content() {
+	
 
 }
+
+

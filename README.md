@@ -1,6 +1,6 @@
 # PROJECT: CYBERTRACE - A New Way to Track Cyberattacks
 
-<span style="color: red">***This project is in early alpha, and is not ready for production usage.***</span>
+***This project was a proof-of-concept demo'ed in 2021. This is archived for historical purposes. Future development of this will not happen on this repository.***
 
 ![](./promo/CyberTrace.png)
 
